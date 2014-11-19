@@ -1,19 +1,19 @@
 -- ============================================================
 --   Nom de la base   :  BASKETBALL                                
---   Nom de SGBD      :  MySQL
+--   Nom de SGBD      :  MariaDB
 --   Date de creation :  17/11/14
 -- ============================================================
 
-drop table Membre;
-drop table Entraineur;
-drop table Joueur;
-drop table Responsable;
-drop table Club;
-drop table Match;
+drop table Entrainer;
+drop table Jouer;
 drop table Rencontrer;
 drop table Equipe;
+drop table Rencontre;
+drop table Responsable;
+drop table Club;
 drop table Joueur;
-drop table Entrainer;
+drop table Entraineur;
+drop table Membre;
 
 -- ============================================================
 --   Table : Membre
@@ -21,12 +21,12 @@ drop table Entrainer;
 
 create table Membre
 (
-ID_Membre	int		unsigned auto_increment not null,
+ID		int		unsigned auto_increment not null,
 Nom		varchar(30)				not null,
 Prenom		varchar(30)				not null,
 Date_Entree	date					not null,
 
-Primary Key(ID_Membre)
+Primary Key(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -35,9 +35,9 @@ Primary Key(ID_Membre)
 
 create table Entraineur
 (
-ID_Membre	int		unsigned		not null,
+ID		int		unsigned		not null,
 
-Primary Key(ID_Membre)
+Primary Key(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -46,14 +46,14 @@ Primary Key(ID_Membre)
 
 create table Joueur
 (
-ID_Membre	int					not null,
+ID		int					not null,
 Num_Licence	int		unsigned auto_increment not null,
 Date_Naissance	date			 		not null,
 Adresse		text					not null,
 Points		int					not null,
 Fautes		int					not null,
 
-Primary Key(ID_Membre)
+Primary Key(Num_Licence, ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -62,11 +62,11 @@ Primary Key(ID_Membre)
 
 create table Club
 (
-ID_Club		int		unsigned auto_increment	not null,
+ID		int		unsigned auto_increment	not null,
 Nom		varchar(30)		 		not null,
 Ville		varchar(30)				not null,
 
-Primary Key(ID_Club)
+Primary Key(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -75,25 +75,25 @@ Primary Key(ID_Club)
 
 create table Responsable
 (
-ID_Membre	int		unsigned		not null,
+ID		int		unsigned		not null,
 Role		varchar(30)				not null,
 ID_Club		int		unsigned		not null,
 
-Primary Key(ID_Membre)
-Foreign Key(ID_Club) References Club(ID_Club)
+Primary Key(ID),
+Foreign Key(ID_Club) References Club(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
---   Table : Match
+--   Table : Rencontrer
 -- ============================================================
 
-create table Match
+create table Rencontre
 (
-ID_Rencontre	int		unsigned auto_increment not null,
+ID		int		unsigned auto_increment not null,
 Date_match	date			 		not null,
 Score		varchar(15)				not null,
 
-Primary Key(ID_Rencontre)
+Primary Key(ID)
 )Engine = InnoDB;
 
 -- ============================================================
@@ -102,12 +102,12 @@ Primary Key(ID_Rencontre)
 
 create table Equipe
 (
-ID_Equipe	int		unsigned auto_increment not null,
+ID		int		unsigned auto_increment not null,
 Categorie	varchar(30)		 		not null,
 ID_Club		int		unsigned		not null,
 
-Primary Key(ID_Equipe)
-Foreign Key(ID_Club) References Club(ID_Club)
+Primary Key(ID),
+Foreign Key(ID_Club) References Club(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -120,8 +120,8 @@ ID_Membre	int		unsigned		not null,
 ID_Rencontre	int		unsigned		not null,
 ID_Equipe	int		unsigned		not null,
 
-Primary Key(ID_Membre, ID_Rencontre)
-Foreign Key(ID_Equipe) References Equipe(ID_Equipe)
+Primary Key(ID_Membre, ID_Rencontre),
+Foreign Key(ID_Equipe) References Equipe(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -134,8 +134,8 @@ ID_Membre	int		unsigned		not null,
 Date_Match	date					not null,
 ID_Equipe	int		unsigned		not null,
 
-Primary Key(ID_Membre, Date_Match)
-Foreign Key(ID_Equipe) References Equipe(ID_Equipe)
+Primary Key(ID_Membre, Date_Match),
+Foreign Key(ID_Equipe) References Equipe(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -148,6 +148,6 @@ ID_Membre	   int		unsigned		not null,
 Date_Entrainement  date					not null,
 ID_Equipe	   int		unsigned		not null,
 
-Primary Key(ID_Membre, Date_Entrainement)
-Foreign Key(ID_Equipe) References Equipe(ID_Equipe)
+Primary Key(ID_Membre, Date_Entrainement),
+Foreign Key(ID_Equipe) References Equipe(ID)
 ) Engine = InnoDB;
