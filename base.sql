@@ -5,7 +5,7 @@
 -- ============================================================
 
 drop table Entrainer;
-drop table Jouer;
+drop table Sentrainer;
 drop table Rencontrer;
 drop table Equipe;
 drop table Rencontre;
@@ -46,14 +46,13 @@ Primary Key(ID)
 
 create table Joueur
 (
-ID		int					not null,
 Num_Licence	int		unsigned auto_increment not null,
+ID_Membre	int		unsigned		not null,
 Date_Naissance	date			 		not null,
-Adresse		text					not null,
-Points		int					not null,
-Fautes		int					not null,
+Adresse		text						,
 
-Primary Key(Num_Licence, ID)
+Primary Key(Num_Licence),
+Foreign Key(ID_Membre) References Membre(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
@@ -84,14 +83,13 @@ Foreign Key(ID_Club) References Club(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
---   Table : Rencontrer
+--   Table : Rencontre
 -- ============================================================
 
 create table Rencontre
 (
 ID		int		unsigned auto_increment not null,
 Date_match	date			 		not null,
-Score		varchar(15)				not null,
 
 Primary Key(ID)
 )Engine = InnoDB;
@@ -119,16 +117,18 @@ create table Rencontrer
 ID_Membre	int		unsigned		not null,
 ID_Rencontre	int		unsigned		not null,
 ID_Equipe	int		unsigned		not null,
+Points		int		unsigned		not null,
+Fautes		int		unsigned		not null,
 
 Primary Key(ID_Membre, ID_Rencontre),
 Foreign Key(ID_Equipe) References Equipe(ID)
 ) Engine = InnoDB;
 
 -- ============================================================
---   Table : Jouer
+--   Table : Sentrainer
 -- ============================================================
 
-create table Jouer
+create table Sentrainer
 (
 ID_Membre	int		unsigned		not null,
 Date_Match	date					not null,
