@@ -3,19 +3,19 @@
 include_once('Database.php');
 
 
-class Club 
+class Match 
 {
 	static function getList()
 	{
-		$q = Database::query('Select * from Club');
+		$q = Database::query('Select * from Rencontre');
 		$r = '';
 		
 		while ($data = $q->fetch())
 		{
 		
-			$r = $r . '<p> <h2> Club ' . $data['ID'] .':</h2>'
-			.'Ville : ' . $data['Ville'] .
-			'</p>';
+			$r = $r . '<p> <h2> Match ' . $data['ID'] .':</h2><ul>'
+			
+			. '</ul></p>';
 
 		}
 

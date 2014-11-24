@@ -9,7 +9,8 @@
 <body>
 <div id="conteneur">
 <div id="top"><img src="img/top.png"></div><br>
-<p class="menu_horz_1"> <a href="index.php?page=club">Clubs</a> | <a href="index.php?page=equipe">Équipes</a> | <a href="index.php?page=joueur">Joueurs</a> </p>
+<p class="menu_horz_1"> <a href="index.php?page=club">Clubs</a> | <a href="index.php?page=equipe">Équipes</a> | <a href="index.php?page=joueur">Joueurs</a>
+ | <a href="index.php?page=match">Matchs</a></p>
 
 <?php 
 

@@ -1,7 +1,9 @@
 <?php 
 include_once('Database.php');
 include_once('Club.php');
-
+include_once('Equipe.php');
+include_once('Joueur.php');
+include_once('Match.php');
 
 function main()
 {
@@ -12,7 +14,19 @@ function main()
 	{
 		if ($_GET['page'] == 'club')
 		{
-			echo getListClub();
+			echo Club::getList();
+		}
+		else if ($_GET['page'] == 'equipe')
+		{
+			echo Equipe::getList();
+		}
+		else if ($_GET['page'] == 'joueur')
+		{
+			echo Joueur::getList();
+		}
+		else if ($_GET['page'] == 'match')
+		{
+			echo Match::getList();
 		}
 		else
 		{
