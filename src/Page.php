@@ -4,6 +4,7 @@ include_once('Club.php');
 include_once('Equipe.php');
 include_once('Joueur.php');
 include_once('Match.php');
+include_once('Statistique.php');
 
 function main()
 {
@@ -27,6 +28,10 @@ function main()
 		else if ($_GET['page'] == 'match')
 		{
 			echo Match::getList();
+		}
+		else if ($_GET['page'] == 'statistique')
+		{
+			echo Statistique::getPage();
 		}
 		else
 		{

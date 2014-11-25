@@ -7,18 +7,53 @@ class Club
 {
 	static function getList()
 	{
-		$q = Database::query('Select * from Club');
+		$q1 = Database::query('Select * From Club');
 		$r = '';
 		
-		while ($data = $q->fetch())
+		while ($data1 = $q1->fetch())
 		{
 		
-			$r = $r . '<p> <h2> Club ' . $data['ID'] .':</h2>'
-			.'Ville : ' . $data['Ville'] .
-			'</p>';
-
+			$r = $r . '<p> <h2> Club ' . $data1['ID'] .':</h2><ul>'
+			.'<li>Ville : ' . $data1['Ville'] . '</li>';
+			
+			// recherche des responsables
+			$r = $r . '<li>Reponsables : ' . Club::getResponsables($data1['ID']) . '</li>';
+			
+			$r = $r . '<li>Nomre d\'équipes : ' . Club::getNombreEquipes($data1['ID']) . '</li>';
+			
+			$r = $r . '</ul></p>';
 		}
 
+		$q1->closeCursor();
+		
+		return $r;
+	}
+	
+	static function getResponsables($idClub)
+	{
+		$r = '<ul>';
+		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub . ' and m.ID = r.ID');
+
+		while ($data = $q->fetch())
+		{
+			$r = $r . '<li>' . $data['Role'] .' : ' . $data['Nom'] . '  ' . $data['Prenom'] . '  (prise de fonction : ' . $data['Date_Entree'] . ')</li>';
+		}
+		$q->closeCursor();
+		
+		return $r . '</ul>';
+	}
+	
+	static function getNombreEquipes($idClub)
+	{
+		return Database::query('Select count(*) From Equipe Where ID_Club = ' . $idClub)->fetchColumn();;
+	}
+	
+	static function getNombreMatchsGagnes($idClub)
+	{
+		$r = '';
+		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub . ' and m.ID = r.ID');
+
+		
 		$q->closeCursor();
 		
 		return $r;
