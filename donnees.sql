@@ -2,43 +2,55 @@
 --    Suppression des donnees
 -- ============================================================
 
-delete from Membre;
-delete from Entraineur;
-delete from Joueur;
-delete from Club;
-delete from Responsable;
-delete from Rencontre;
-delete from Equipe;
 delete from Rencontrer;
-delete from Sentrainer;
-delete from Entrainer;
+delete from Rencontre;
+delete from Joueur;
+delete from Entraineur;
+delete from Responsable;
+delete from Equipe;
+delete from Club;
+delete from Membre;
 
 -- ============================================================
 --    Creation des donnees
 -- ============================================================
 
+-- Club
+
+insert into Club values (1, 'Gryffondor',  'Bordeaux');
+insert into Club values (2, 'Serpentard',  'Paris');
+insert into Club values (3, 'Poufsouffle', 'Marseille');
+insert into Club values (4, 'Serdaigle',   'Grenoble');
+
+-- Equipe
+
+insert into Equipe values (1, 'Senior', 1);
+insert into Equipe values (2, 'Senior', 2);
+insert into Equipe values (3, 'Senior', 3);
+insert into Equipe values (4, 'Senior', 4);
+
 -- Membre
 
-insert into Membre values (1  ,'Philippi'  ,'Alexandre'  ,'01-SEP-2012');
-insert into Membre values (2  ,'Paillassa' ,'Maxime'     ,'15-JAN-2011');
-insert into Membre values (3  ,'Maupeu'    ,'Xavier'     ,'12-MAR-2010');
-insert into Membre values (4  ,'Adotevi'   ,'Lionel'     ,'11-SEP-2012');
-insert into Membre values (5  ,'Angeletti' ,'Isabelle'   ,'21-OCT-2011');
-insert into Membre values (6  ,'Apery'     ,'Celine'     ,'15-NOV-2012');
-insert into Membre values (7  ,'Boudjeltia','Reda'       ,'14-SEP-2012');
-insert into Membre values (8  ,'Chabot'    ,'Romain'     ,'30-OCT-2012');
-insert into Membre values (9  ,'Carrie'    ,'Mathieu'    ,'25-APR-2010');
-insert into Membre values (10 ,'Cidere'    ,'Laurent'    ,'15-MAY-2012');
-insert into Membre values (11 ,'Cleriot'   ,'Simon'      ,'24-MAR-2009');
-insert into Membre values (12 ,'Devoir'    ,'Loic'       ,'13-JAN-2012');
-insert into Membre values (13 ,'Dury'      ,'Victor'     ,'01-SEP-2008');
-insert into Membre values (14 ,'Nizet'     ,'Aurélien'   ,'15-DEC-2011');
-insert into Membre values (15 ,'Sabir'     ,'Reda'       ,'24-JUN-2009');
-insert into Membre values (16 ,'Zouad'     ,'Lotfi'      ,'30-OCT-2012');
-insert into Membre values (17 ,'Fiot'      ,'Arthur'     ,'01-SEP-2012');
-insert into Membre values (18 ,'Gaulon'    ,'Pierre'     ,'01-SEP-2012');
-insert into Membre values (19 ,'Patrone'   ,'Agnés'      ,'11-SEP-2012');
-insert into Membre values (20 ,'Zouari'    ,'Firas'      ,'11-JUN-2010');
+insert into Membre values (1,  1  ,'Philippi'  ,'Alexandre'  ,'2012-09-01');
+insert into Membre values (2,  1  ,'Paillassa' ,'Maxime'     ,'2011-01-15');
+insert into Membre values (3,  1  ,'Maupeu'    ,'Xavier'     ,'2010-03-12');
+insert into Membre values (4,  1  ,'Adotevi'   ,'Lionel'     ,'2013-09-11');
+insert into Membre values (5,  1  ,'Angeletti' ,'Isabelle'   ,'2011-10-21');
+insert into Membre values (6,  2  ,'Apery'     ,'Celine'     ,'2012-11-15');
+insert into Membre values (7,  2  ,'Boudjeltia','Reda'       ,'2012-09-14');
+insert into Membre values (8,  2  ,'Chabot'    ,'Romain'     ,'2012-10-30');
+insert into Membre values (9,  2  ,'Carrie'    ,'Mathieu'    ,'2010-04-15');
+insert into Membre values (10, 2  ,'Cidere'    ,'Laurent'    ,'2012-05-15');
+insert into Membre values (11, 3  ,'Cleriot'   ,'Simon'      ,'2009-09-14');
+insert into Membre values (12, 3  ,'Devoir'    ,'Loic'       ,'2012-01-13');
+insert into Membre values (13, 3  ,'Dury'      ,'Victor'     ,'2009-05-15');
+insert into Membre values (14, 3  ,'Nizet'     ,'Aurélien'   ,'2011-12-15');
+insert into Membre values (15, 3  ,'Sabir'     ,'Reda'       ,'2009-06-24');
+insert into Membre values (16, 4  ,'Zouad'     ,'Lotfi'      ,'2012-10-30');
+insert into Membre values (17, 4  ,'Fiot'      ,'Arthur'     ,'2012-09-01');
+insert into Membre values (18, 4  ,'Gaulon'    ,'Pierre'     ,'2012-09-01');
+insert into Membre values (19, 4  ,'Patrone'   ,'Agnés'      ,'2012-09-11');
+insert into Membre values (20, 4  ,'Zouari'    ,'Firas'      ,'2010-11-15');
 
 -- Entraineur
 
@@ -53,39 +65,32 @@ insert into Entraineur values (16);
 -- Joueur
 
 -- Gryffondor
-insert into Joueur values (1,  1,  '09-JUN-1993');
-insert into Joueur values (2,  2,  '08-SEP-1993');
-insert into Joueur values (3,  3,  '19-JAN-1989');
-insert into Joueur values (4,  4,  '21-JUL-1987');
-insert into Joueur values (5,  5,  '20-OCT-1975');
+insert into Joueur values (1,  1,  '1993-06-09', null);
+insert into Joueur values (2,  2,  '1993-08-09', null);
+insert into Joueur values (3,  3,  '1989-05-15', null);
+insert into Joueur values (4,  4,  '1987-01-25', null);
+insert into Joueur values (5,  5,  '1975-10-20', null);
 
 -- Serpentard
-insert into Joueur values (6,  6,  '21-APR-1993');
-insert into Joueur values (7,  7,  '24-DEC-1990');
-insert into Joueur values (8,  8,  '01-APR-1992');
-insert into Joueur values (9,  9,  '25-FEB-1979');
-insert into Joueur values (10, 10, '15-JUN-1995');
+insert into Joueur values (6,  6,  '1993-04-21', null);
+insert into Joueur values (7,  7,  '1990-12-24', null);
+insert into Joueur values (8,  8,  '1992-04-01', null);
+insert into Joueur values (9,  9,  '1979-02-17', null);
+insert into Joueur values (10, 10, '1995-06-03', null);
 
 -- Poufsouffle
-insert into Joueur values (11, 11, '14-AUG-1987');
-insert into Joueur values (12, 12, '24-MAY-1993');
-insert into Joueur values (13, 13, '17-JUN-1993');
-insert into Joueur values (14, 14, '09-JUN-1993');
-insert into Joueur values (15, 15, '08-SEP-1993');
+insert into Joueur values (11, 11, '1987-11-07', null);
+insert into Joueur values (12, 12, '1993-05-24', null);
+insert into Joueur values (13, 13, '1993-06-17', null);
+insert into Joueur values (14, 14, '1993-06-09', null);
+insert into Joueur values (15, 15, '1993-09-08', null);
 
 -- Serdaigle
-insert into Joueur values (16, 16, '17-MAR-1986');
-insert into Joueur values (17, 17, '18-NOV-1994');
-insert into Joueur values (18, 18, '25-MAR-1994');
-insert into Joueur values (19, 19, '22-JUN-1993');
-insert into Joueur values (20, 20, '17-FEB-1991');
-
--- Club
-
-insert into Club values (1, 'Gryffondor',  'Bordeaux');
-insert into Club values (2, 'Serpentard',  'Paris');
-insert into Club values (3, 'Poufsouffle', 'Marseille');
-insert into Club values (4, 'Serdaigle',   'Grenoble');
+insert into Joueur values (16, 16, '1986-03-17', null);
+insert into Joueur values (17, 17, '1994-03-24', null);
+insert into Joueur values (18, 18, '1994-08-12', null);
+insert into Joueur values (19, 19, '1993-07-22', null);
+insert into Joueur values (20, 20, '1991-02-17', null);
 
 -- Responsable
 
@@ -97,29 +102,22 @@ insert into Responsable values (16, 'President', 4);
 -- Rencontre
 
 -- Gryffondor - Serpentard
-insert into Rencontre values (1,  '04-OCT-2014');
+insert into Rencontre values (1,  '2014-10-04');
 
 -- Gryffondor - Poufsouffle
-insert into Rencontre values (2,  '11-OCT-2014');
+insert into Rencontre values (2,  '2014-10-11');
 
 -- Gryffondor - Serdaigle
-insert into Rencontre values (3,  '18-OCT-2014');
+insert into Rencontre values (3,  '2014-10-18');
 
 -- Serpentard - Poufsouffle
-insert into Rencontre values (4,  '25-OCT-2014');
+insert into Rencontre values (4,  '2014-10-25');
 
 -- Serpentard - Serdaigle
-insert into Rencontre values (5,  '01-NOV-2014');
+insert into Rencontre values (5,  '2014-11-01');
 
 -- Poufsouffle - Serdaigle
-insert into Rencontre values (6,  '08-NOV-2014');
-
--- Equipe
-
-insert into equipe values (1, 'Senior', 1);
-insert into equipe values (2, 'Senior', 2);
-insert into equipe values (3, 'Senior', 3);
-insert into equipe values (4, 'Senior', 4);
+insert into Rencontre values (6,  '2014-11-08');
 
 -- Rencontrer
 
@@ -201,8 +199,6 @@ insert into Rencontrer values (17, 6, 4, 18, 2);
 insert into Rencontrer values (18, 6, 4, 3,  2);
 insert into Rencontrer values (19, 6, 4, 11, 0);
 insert into Rencontrer values (20, 6, 4, 1,  3);
-
-
 
 -- Sentrainer
 
