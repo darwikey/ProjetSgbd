@@ -55,6 +55,30 @@ class Match
 		
 		return $r;
 	}
+	
+	static function getMoreInfoMatch($idRencontre)
+	{
+		$r = '';
+		$q = Database::query('Select c.Nom, e.Categorie, sum(r.Points) as SumPoints, sum(r.Fautes) as SumFautes 
+		From Rencontrer r, Equipe e, Club c
+		Where ID_Rencontre = ' .  $idRencontre
+		. ' and e.ID_Equipe = r.ID_Equipe
+		and e.ID_Club = c.ID_Club
+		Group by e.ID_Equipe
+		Order by SumPoints DESC');
+		
+		
+		while ($data = $q->fetch())
+		{
+			$r = $r . '<li>Club ' . $data['Nom'] . ' (équipe ' . $data['Categorie'] 
+			. ') - Score : ' . $data['SumPoints'] 
+			. ' - Fautes : ' . $data['SumFautes'] . '</li>';
+			
+		
+		}
+		
+		return $r;
+	}
 }
 
 ?>
