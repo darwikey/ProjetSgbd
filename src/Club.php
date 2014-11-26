@@ -13,13 +13,13 @@ class Club
 		while ($data1 = $q1->fetch())
 		{
 		
-			$r = $r . '<p> <h2> Club ' . $data1['ID'] .':</h2><ul>'
+			$r = $r . '<p> <h2> Club ' . $data1['Nom'] .':</h2><ul>'
 			.'<li>Ville : ' . $data1['Ville'] . '</li>';
 			
 			// recherche des responsables
-			$r = $r . '<li>Reponsables : ' . Club::getResponsables($data1['ID']) . '</li>';
+			$r = $r . '<li>Reponsables : ' . Club::getResponsables($data1['ID_Club']) . '</li>';
 			
-			$r = $r . '<li>Nomre d\'équipes : ' . Club::getNombreEquipes($data1['ID']) . '</li>';
+			$r = $r . '<li>Nomre d\'équipes : ' . Club::getNombreEquipes($data1['ID_Club']) . '</li>';
 			
 			$r = $r . '</ul></p>';
 		}
@@ -32,7 +32,7 @@ class Club
 	static function getResponsables($idClub)
 	{
 		$r = '<ul>';
-		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub . ' and m.ID = r.ID');
+		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub . ' and m.ID_Membre = r.ID_Membre');
 
 		while ($data = $q->fetch())
 		{
@@ -51,7 +51,8 @@ class Club
 	static function getNombreMatchsGagnes($idClub)
 	{
 		$r = '';
-		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub . ' and m.ID = r.ID');
+		//TODO
+		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub);
 
 		
 		$q->closeCursor();

@@ -6,14 +6,14 @@ class Equipe
 {
 	static function getList()
 	{
-		$q = Database::query('Select * from Equipe e,Club c where e.ID_Club = c.ID');
+		$q = Database::query('Select * from Equipe e,Club c where e.ID_Club = c.ID_Club');
 		$r = '';
 		
 		while ($data = $q->fetch())
 		{
 		
-			$r = $r . '<p> <h2> Equipe ' . $data['ID'] .':</h2>'
-			.'<ul> <li>Categorie : ' . $data['Categorie'] . '</li>'
+			$r = $r . '<p> <h2> Equipe ' . $data['ID_Equipe'] .':</h2><ul>'
+			.'<li>Categorie : ' . $data['Categorie'] . '</li>'
 			.'<li>Club : ' . $data['Nom'] . ' (' . $data['Ville'] . ')</li>'
 			.'</ul></p>';
 
