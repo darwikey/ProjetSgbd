@@ -94,10 +94,10 @@ insert into Joueur values (20, 20, '1991-02-17', null);
 
 -- Responsable
 
-insert into Responsable values (1,  'President', 1);
-insert into Responsable values (6,  'President', 2);
-insert into Responsable values (11, 'President', 3);
-insert into Responsable values (16, 'President', 4);
+insert into Responsable values (1,  'President');
+insert into Responsable values (6,  'President');
+insert into Responsable values (11, 'President');
+insert into Responsable values (16, 'President');
 
 -- Rencontre
 

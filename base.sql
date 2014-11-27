@@ -79,10 +79,8 @@ create table Responsable
 (
 ID_Membre	int		unsigned		not null,
 Role		varchar(30)				not null,
-ID_Club		int		unsigned		not null,
 
 Primary Key(ID_Membre),
-Foreign Key(ID_Club) References Club(ID_Club),
 Foreign Key(ID_Membre) References Membre(ID_Membre)
 ) Engine = InnoDB;
 
