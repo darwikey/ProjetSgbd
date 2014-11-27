@@ -46,6 +46,10 @@ h6 {
   font-size: 0.8em;
   background-color: #e0e0e0;
 }
+td
+{
+    border: 1.5px solid gray;
+}
 ul {
   margin-top: 0em;
   margin-left: 1.1em;

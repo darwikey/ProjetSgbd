@@ -49,33 +49,33 @@ class Statistique
 
 	static function getMatchs($date)
 	{
-		$r = '<ul>';
+		$r = '';
 		$q = Database::query('Select ID_Rencontre From Rencontre Where Date_Match = \'' . $date . '\'');
 		
 		
 		while ($data = $q->fetch())
 		{
-			$r = $r . Match::getInfoMatch($data['ID_Rencontre']);
+			$r = $r . '<h1>Rencontre ' . $data['ID_Rencontre'] . ' : </h1><p>' 
+			. Match::getInfoMatch($data['ID_Rencontre']) . '</p>';
 		}
 		
-		return $r . '</ul>';
+		return $r;
 	}
 	
 	
 	static function getFeuilleMatchs($date)
 	{
-		$r = '<ul>';
+		$r = '';
 		$q = Database::query('Select ID_Rencontre From Rencontre Where Date_Match = \'' . $date . '\'');
 		
 		
 		while ($data = $q->fetch())
 		{
-			$r = $r . Match::getInfoMatch($data['ID_Rencontre']);
-			$r = $r . '';
-			$r = $r . Match::getMoreInfoMatch($data['ID_Rencontre']);
+			$r = $r . '<h1>Rencontre ' . $data['ID_Rencontre'] . ' : </h1><p>' 
+			. Match::getMoreInfoMatch($data['ID_Rencontre']) . '</p>';
 		}
 		
-		return $r . '</ul>';
+		return $r;
 	}
 }
 
