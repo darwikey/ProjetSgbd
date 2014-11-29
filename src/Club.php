@@ -19,7 +19,7 @@ class Club
 			// recherche des responsables
 			$r = $r . '<li>Reponsables : ' . Club::getResponsables($data1['ID_Club']) . '</li>';
 			
-			$r = $r . '<li>Nomre d\'équipes : ' . Club::getNombreEquipes($data1['ID_Club']) . '</li>';
+			$r = $r . '<li>Nombre d\'équipes : ' . Club::getNombreEquipes($data1['ID_Club']) . '</li>';
 			
 			$r = $r . '</ul></p>';
 		}
