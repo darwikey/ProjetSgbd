@@ -78,7 +78,7 @@ Foreign Key(ID_Membre) References Membre(ID_Membre)
 create table Responsable
 (
 ID_Membre	int		unsigned		not null,
-Role		varchar(30)				not null,
+Activite        varchar(30)				not null,
 
 Primary Key(ID_Membre),
 Foreign Key(ID_Membre) References Membre(ID_Membre)

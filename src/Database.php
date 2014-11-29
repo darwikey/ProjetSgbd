@@ -8,7 +8,7 @@ class Database
 	{
 		try 
 		{
-			self::$bdd = new PDO('mysql:host=localhost;dbname=basketball', 'root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+			self::$bdd = new PDO('mysql:host=localhost;dbname=basketball', 'aphilippi', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
 		}
 		catch (Exception $e)
 		{
@@ -21,5 +21,9 @@ class Database
 		return self::$bdd->query($sql);
 	}
 
+    public static function lastId()
+    {
+      return self::$bdd->lastInsertId();
+    }
 }
 ?>

@@ -5,49 +5,54 @@ include_once('Equipe.php');
 include_once('Joueur.php');
 include_once('Match.php');
 include_once('Statistique.php');
+include_once('Ajouter.php');
 
 function main()
 {
-	// Init Database
-	Database::init();
+  // Init Database
+  Database::init();
 
-	if (isset($_GET['page']))
+  if (isset($_GET['page']))
 	{
-		if ($_GET['page'] == 'club')
+      if ($_GET['page'] == 'club')
 		{
-			echo Club::getList();
+          echo Club::getList();
 		}
-		else if ($_GET['page'] == 'equipe')
+      else if ($_GET['page'] == 'equipe')
 		{
-			echo Equipe::getList();
+          echo Equipe::getList();
 		}
-		else if ($_GET['page'] == 'joueur')
+      else if ($_GET['page'] == 'joueur')
 		{
-			echo Joueur::getList();
+          echo Joueur::getList();
 		}
-		else if ($_GET['page'] == 'match')
+      else if ($_GET['page'] == 'match')
 		{
-			echo Match::getList();
+          echo Match::getList();
 		}
-		else if ($_GET['page'] == 'statistique')
+      else if ($_GET['page'] == 'statistique')
 		{
-			echo Statistique::getPage();
+          echo Statistique::getPage();
 		}
-		else
+      else if ($_GET['page'] == 'ajouter')
 		{
-			echo getFirstPage();
+          echo Ajouter::addMembre();
+		}
+      else
+		{
+          echo getFirstPage();
 		}
 	}
-	else
+  else
 	{
-		echo getFirstPage();
+      echo getFirstPage();
 	}
 }
 
 
 function getFirstPage()
 {
-	return 'machin';
+  return 'machin';
 }
 
 ?>

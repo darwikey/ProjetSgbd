@@ -32,11 +32,11 @@ class Club
 	static function getResponsables($idClub)
 	{
 		$r = '<ul>';
-		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub . ' and m.ID_Membre = r.ID_Membre');
+		$q = Database::query('Select * From Membre m, Responsable r Where m.ID_Club = ' . $idClub . ' and m.ID_Membre = r.ID_Membre');
 
 		while ($data = $q->fetch())
 		{
-			$r = $r . '<li>' . $data['Role'] .' : ' . $data['Nom'] . '  ' . $data['Prenom'] . '  (prise de fonction : ' . $data['Date_Entree'] . ')</li>';
+			$r = $r . '<li>' . $data['Activite'] .' : ' . $data['Nom'] . '  ' . $data['Prenom'] . '  (prise de fonction : ' . $data['Date_Entree'] . ')</li>';
 		}
 		$q->closeCursor();
 		
