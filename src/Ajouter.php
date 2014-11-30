@@ -87,8 +87,13 @@ class Ajouter
                  Responsable <br>
                </p>
 
-               <p> Entrez le poste (uniquement si responsable) :
-                <input type="text" name="role" />
+               <p> Entrez le poste (choisir aucun si pas responsable) :
+                <select name="role">
+                 <option value="President">President</option>
+                 <option value="Tresorier">Tresorier</option>
+                 <option value="Secretaire">Secretaire</option>
+                 <option value="Aucun">Aucun</option>
+                </select>
                </p>
 
                <p>
@@ -150,7 +155,11 @@ class Ajouter
                         
                   if(in_array("Responsable", $_POST['activite']))
                     {
-                      if($_POST['role'] != '')
+                      $q = Database::query('Select Activite From Responsable Where Activite = \'' . $_POST['role'] . '\'');
+
+                      $data = $q->fetch();
+
+                      if($_POST['role'] != 'Aucun' and $_POST['role'] != $data['Activite'])
                         {
                           $role = $_POST['role']; 
 
@@ -172,7 +181,7 @@ class Ajouter
                           $sql = "DELETE FROM Membre where ID_Membre = " . $id_membre; 
                           Database::query($sql);
 
-                          echo "Information manquante responsable.";
+                          echo "Information manquante ou poste déjà occupé.";
                         }
                     }
 
