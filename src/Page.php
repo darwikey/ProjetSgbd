@@ -36,7 +36,11 @@ function main()
 		}
       else if ($_GET['page'] == 'ajouter')
 		{
-          echo Ajouter::addMembre();
+          echo Ajouter::getPage();
+		}
+      else if ($_GET['page'] == 'ajouterMembre')
+		{
+          echo Ajouter::verifyMembre();
 		}
       else
 		{
