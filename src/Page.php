@@ -56,7 +56,7 @@ function main()
 
 function getFirstPage()
 {
-  return 'machin';
+  return '<div style="text-align: center"><img src="img/basket-manager.jpg" width=1000/></div>';
 }
 
 ?>
