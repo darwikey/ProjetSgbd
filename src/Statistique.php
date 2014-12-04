@@ -12,7 +12,7 @@ class Statistique
 		<option value="matchs">matchs</option>
 		<option value="feuille_matchs">feuille de matchs</option>
 		<option value="joueurs_inscrits">joueurs inscrits</option>
-		<option value="equipes_inscrites">équipes inscrites</option>
+		<option value="meilleurs_joueurs">meilleurs joueurs</option>
 		</select>
 		
 		à la date (AAAA-MM-JJ) : 
@@ -37,9 +37,9 @@ class Statistique
 			{
 				$r = $r . Statistique::getJoueursInscrits($date);
 			}
-			else if ($_POST['choix'] == 'equipes_inscrites')
+			else if ($_POST['choix'] == 'meilleurs_joueurs')
 			{
-				$r = $r . Statistique::getEquipesInscrites($date);
+				$r = $r . Statistique::getMeilleursJoueurs($date);
 			}
 		}
 		
@@ -73,6 +73,54 @@ class Statistique
 		{
 			$r = $r . '<h1>Rencontre ' . $data['ID_Rencontre'] . ' : </h1><p>' 
 			. Match::getMoreInfoMatch($data['ID_Rencontre']) . '</p>';
+		}
+		
+		return $r;
+	}
+	
+	static function getJoueursInscrits($date)
+	{
+		$r = '<ul>';
+		$q = Database::query('Select * 
+		From Membre m, Joueur j 
+		Where j.ID_Membre = m.ID_Membre
+		and m.Date_Entree <= \'' . $date . '\'');
+		
+		
+		while ($data = $q->fetch())
+		{
+			$r = $r . '<li>' . $data['Nom'] . ' ' . $data['Prenom'] . '</li>';
+		}
+		
+		return $r . '</ul>';
+	}
+	
+	static function getMeilleursJoueurs($date)
+	{
+		$r = '';
+		$q1 = Database::query('Select Distinct Categorie From Equipe');
+		
+		while ($data1 = $q1->fetch())
+		{
+			$r = $r . '<h1>Catégorie ' . $data1['Categorie'] . '</h1>';
+			
+			$q2 = Database::query('Select m.Nom, m.Prenom,
+				avg(r.Points) as MoyennePoints
+				
+				From Membre m, Joueur j, Rencontrer r, Rencontre a, Equipe e
+				Where m.ID_Membre = j.ID_Membre
+				and r.ID_Membre = m.ID_Membre
+				and a.ID_Rencontre = r.ID_Rencontre
+				and a.Date_Match = "' . $date
+				.'" and e.Categorie = "' . $data1['Categorie']
+				.'" and e.ID_Equipe = r.ID_Equipe
+				Group by j.ID_Membre
+				Order by MoyennePoints DESC');
+			
+			while ($data2 = $q2->fetch())
+			{
+				$r = $r . '<li>' . $data2['Nom'] . ' ' . $data2['Prenom'] . ' - Points en moyenne : ' . (int)$data2['MoyennePoints'] . '</li>';
+			}
 		}
 		
 		return $r;

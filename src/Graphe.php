@@ -87,7 +87,7 @@ while($pasY<($hauteur-19))
 }
 
 
-$pasX=60;
+$pasX=45;
 for($mois = 0; $mois < 12; $mois++)
 {
 	//Ecrire le mois en Français en abscisse

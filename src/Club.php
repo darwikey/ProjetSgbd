@@ -7,7 +7,15 @@ class Club
 {
 	static function getList()
 	{
-		$q1 = Database::query('Select * From Club');
+		$q1 = Database::query('Select c.Nom, c.Ville, c.ID_Club,
+				(Select count(*) 
+				From Equipe e
+				Where c.ID_Club = e.ID_Club) as NombreEquipe,
+				(Select count(*) 
+				From Joueur j, Membre m
+				Where c.ID_Club = m.ID_Club
+				and m.ID_Membre = j.ID_Membre) as NombreJoueur
+			From Club c');
 		$r = '';
 		
 		while ($data1 = $q1->fetch())
@@ -19,7 +27,8 @@ class Club
 			// recherche des responsables
 			$r = $r . '<li>Reponsables : ' . Club::getResponsables($data1['ID_Club']) . '</li>';
 			
-			$r = $r . '<li>Nombre d\'équipes : ' . Club::getNombreEquipes($data1['ID_Club']) . '</li>';
+			$r = $r . '<li>Nombre d\'équipes : ' . $data1['NombreEquipe'] . '</li>'
+			. '<li>Nombre de joueur : ' . $data1['NombreJoueur'] . '</li>';
 			
 			$r = $r . '</ul></p>';
 		}
@@ -41,11 +50,6 @@ class Club
 		$q->closeCursor();
 		
 		return $r . '</ul>';
-	}
-	
-	static function getNombreEquipes($idClub)
-	{
-		return Database::query('Select count(*) From Equipe Where ID_Club = ' . $idClub)->fetchColumn();;
 	}
 	
 	static function getNombreMatchsGagnes($idClub)
