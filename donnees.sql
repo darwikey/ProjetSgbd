@@ -119,6 +119,24 @@ insert into Rencontre values (5,  '2014-11-01');
 -- Poufsouffle - Serdaigle
 insert into Rencontre values (6,  '2014-11-08');
 
+-- Serpentard - Gryffondor
+insert into Rencontre values (7,  '2014-11-15');
+
+-- Poufsouffle - Gryffondor
+insert into Rencontre values (8,  '2014-11-22');
+
+-- Serdaigle - Gryffondor 
+insert into Rencontre values (9,  '2014-11-29');
+
+-- Poufsouffle - Serpentard 
+insert into Rencontre values (10,  '2014-12-06');
+
+-- Serdaigle - Serpentard 
+insert into Rencontre values (11,  '2014-12-13');
+
+-- Serdaigle - Poufsouffle
+insert into Rencontre values (12,  '2014-12-20');
+
 -- Rencontrer
 
 -- Rencontre 1
@@ -161,7 +179,6 @@ insert into Rencontrer values (19, 3, 4, 0,  0);
 insert into Rencontrer values (20, 3, 4, 3,  1);
 
 -- Rencontre 4
-
 insert into Rencontrer values (6,  4, 2, 22, 1);
 insert into Rencontrer values (7,  4, 2, 4,  3);
 insert into Rencontrer values (8,  4, 2, 17, 1);
@@ -199,6 +216,85 @@ insert into Rencontrer values (17, 6, 4, 18, 2);
 insert into Rencontrer values (18, 6, 4, 3,  2);
 insert into Rencontrer values (19, 6, 4, 11, 0);
 insert into Rencontrer values (20, 6, 4, 1,  3);
+
+-- Rencontre 7
+insert into Rencontrer values (6,  7, 2, 10, 4);
+insert into Rencontrer values (7,  7, 2, 2,  0);
+insert into Rencontrer values (8,  7, 2, 3,  2);
+insert into Rencontrer values (9,  7, 2, 10, 4);
+insert into Rencontrer values (10, 7, 2, 12, 3);
+
+insert into Rencontrer values (1,  7, 1, 10,  1);
+insert into Rencontrer values (2,  7, 1, 13,  3);
+insert into Rencontrer values (3,  7, 1, 10,  1);
+insert into Rencontrer values (4,  7, 1, 8,   0);
+insert into Rencontrer values (5,  7, 1, 2,   1);
+
+-- Rencontre 8
+insert into Rencontrer values (11, 8, 3, 5,  1);
+insert into Rencontrer values (12, 8, 3, 2,  0);
+insert into Rencontrer values (13, 8, 3, 14, 2);
+insert into Rencontrer values (14, 8, 3, 11, 2);
+insert into Rencontrer values (15, 8, 3, 6,  1);
+
+insert into Rencontrer values (1,  8, 1, 16, 3);
+insert into Rencontrer values (2,  8, 1, 11, 1);
+insert into Rencontrer values (3,  8, 1, 2,  0);
+insert into Rencontrer values (4,  8, 1, 8,  1);
+insert into Rencontrer values (5,  8, 1, 5,  0);
+
+-- Rencontre 9
+insert into Rencontrer values (16, 9, 4, 15, 4);
+insert into Rencontrer values (17, 9, 4, 4,  1);
+insert into Rencontrer values (18, 9, 4, 11, 2);
+insert into Rencontrer values (19, 9, 4, 2,  1);
+insert into Rencontrer values (20, 9, 4, 6,  1);
+
+insert into Rencontrer values (1,  9, 1, 17, 1);
+insert into Rencontrer values (2,  9, 1, 6,  1);
+insert into Rencontrer values (3,  9, 1, 3,  1);
+insert into Rencontrer values (4,  9, 1, 2,  3);
+insert into Rencontrer values (5,  9, 1, 8,  1);
+
+-- Rencontre 10
+insert into Rencontrer values (11, 10, 3, 7,  1);
+insert into Rencontrer values (12, 10, 3, 4,  1);
+insert into Rencontrer values (13, 10, 3, 15, 2);
+insert into Rencontrer values (14, 10, 3, 12, 0);
+insert into Rencontrer values (15, 10, 3, 4,  0);
+
+insert into Rencontrer values (6,  10, 2, 4,  3);
+insert into Rencontrer values (7,  10, 2, 4,  4);
+insert into Rencontrer values (8,  10, 2, 15, 3);
+insert into Rencontrer values (9,  10, 2, 24, 3);
+insert into Rencontrer values (10, 10, 2, 6,  2);
+
+-- Rencontre 11
+insert into Rencontrer values (16, 11, 4, 5,  2);
+insert into Rencontrer values (17, 11, 4, 14, 1);
+insert into Rencontrer values (18, 11, 4, 9,  3);
+insert into Rencontrer values (19, 11, 4, 6,  2);
+insert into Rencontrer values (20, 11, 4, 12, 3);
+
+insert into Rencontrer values (6,  11, 2, 10, 3);
+insert into Rencontrer values (7,  11, 2, 12, 4);
+insert into Rencontrer values (8,  11, 2, 2,  2);
+insert into Rencontrer values (9,  11, 2, 18, 3);
+insert into Rencontrer values (10, 11, 2, 17, 4);
+
+-- Rencontre 12
+insert into Rencontrer values (16, 12, 4, 8,  1);
+insert into Rencontrer values (17, 12, 4, 17, 2);
+insert into Rencontrer values (18, 12, 4, 6,  3);
+insert into Rencontrer values (19, 12, 4, 14, 1);
+insert into Rencontrer values (20, 12, 4, 5,  0);
+
+insert into Rencontrer values (11, 12, 3, 7,  0);
+insert into Rencontrer values (12, 12, 3, 2,  0);
+insert into Rencontrer values (13, 12, 3, 15, 2);
+insert into Rencontrer values (14, 12, 3, 10, 3);
+insert into Rencontrer values (15, 12, 3, 5,  4);
+
 
 -- Sentrainer
 
