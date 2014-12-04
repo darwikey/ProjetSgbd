@@ -42,6 +42,14 @@ function main()
 		{
           echo Ajouter::verifyMembre();
 		}
+      else if ($_GET['page'] == 'ajouterClub')
+		{
+          echo Ajouter::verifyClub();
+		}
+      else if ($_GET['page'] == 'ajouterEquipe')
+		{
+          echo Ajouter::verifyEquipe();
+		}
       else
 		{
           echo getFirstPage();

@@ -12,6 +12,7 @@ class Ajouter
                  <option value="Membre">Membre</option>
                  <option value="Club">Club</option>
                  <option value="Match">Match</option>
+                 <option value="Equipe">Equipe</option>
                 </select>
 
                 <input type="submit" value="Suivant">
@@ -35,10 +36,19 @@ class Ajouter
           {
             $r = $r . Ajouter::addMatch();
           }
+
+        else if($_POST['choix'] == 'Equipe')
+          {
+            $r = $r . Ajouter::addEquipe();
+          }
       }
 
     return $r;
   }
+
+  /*
+    Ajout d'un membre
+   */
 
   static function addMembre()
   {
@@ -113,12 +123,12 @@ class Ajouter
         isset($_POST['activite']))
           {
             $q = Database::query('Select ID_Club From Club Where Nom = \'' . $_POST['club'] . '\'');
-
+            
             $data = $q->fetch();
 
             $id_club = $data['ID_Club'];
-            $nom     = $_POST['nom'];
-            $prenom  = $_POST['prenom'];
+            $nom     = strip_tags($_POST['nom']);
+            $prenom  = strip_tags($_POST['prenom']);
             $entree  = $_POST['entree'];
 
             $sql = "INSERT INTO Membre(ID_Membre, ID_Club, Nom, Prenom, Date_Entree) VALUES ('','$id_club', '$nom', '$prenom', '$entree')";
@@ -185,7 +195,7 @@ class Ajouter
 
         else 
           {
-            return "Informations manquantes";
+            return "Informations manquantes.\n";
           }
       }
 
@@ -193,6 +203,113 @@ class Ajouter
       {
         return "Mauvais format de date.\n";
       }
+  }
+
+  /*
+    Ajout d'un club
+  */
+
+  static function addClub()
+  {
+    $q = Database::query('Select m.ID_Membre, m.Nom, m.Prenom 
+                          From Membre m
+                          Where not exists (Select * from Responsable r where m.ID_Membre = r.ID_Membre)');
+
+    $r = $r . '<form action="index.php?page=ajouterClub" method="post">
+               <p> Entrez le nom : 
+               <input type="text" name="nom" /> </p>
+               <p> Entrez la ville :
+               <input type="text" name="ville" /> </p>
+               <p> Choisissez un président : 
+               <select name="president">';
+
+      while($data = $q->fetch())
+        {
+          $r = $r . '<option value="' . $data['ID_Membre'] . '_' . $data['Nom'] . '_' . $data['Prenom'] ;
+          $r = $r . '">' . $data['ID_Membre'] . ' ' . $data['Nom'] . ' ' . $data['Prenom'] . '</option>';          
+        }
+      
+      $r = $r . '</p> <p> <input type="submit" value="Enregistrer" /> </p>';
+      
+      return $r;
+  }
+
+  static function verifyClub()
+  {
+    if(isset($_POST['nom']) and isset($_POST['ville']))
+      {
+        $nom = $_POST['nom'];
+        $ville = $_POST['ville'];
+        $info_president = explode('_', $_POST['president']);
+
+        $sql = "INSERT INTO Club(ID_Club, Nom, Ville) VALUES ('','$nom','$ville')";
+        Database::query($sql);
+        
+        $id_club = Database::lastId();
+
+        $date = getdate();
+        $date_formatee = $date['year'] . '-' . $date['mon'] . '-' . $date['mday'];
+
+        $sql = "UPDATE Membre SET ID_Club='$id_club', Date_Entree='$date_formatee' WHERE ID_Membre='$info_president[0]'";
+        Database::query($sql);
+
+        $sql = "INSERT INTO Responsable(ID_Membre, Activite) VALUES ('$info_president[0]', 'President')";
+        Database::query($sql);
+
+        return "Club enregistré avec succés.\n";
+      }
+
+    else
+      {
+        return "Informations manquantes.\n";
+      }
+  }
+
+  /*
+    Ajout d'une équipe
+  */
+
+  static function addEquipe()
+  {
+    $q = Database::query('Select Nom, ID_Club From Club');
+
+    $r = $r . '<form action="index.php?page=ajouterEquipe" method="post">
+               <p> Choisissez le club : 
+               <select name="club">';
+
+    while($data = $q->fetch())
+      {
+        $r = $r . '<option value="' . $data['ID_Club'] . '_' . $data['Nom'];
+        $r = $r . '">' . $data['ID_Club'] . ' ' . $data['Nom'] . '</option>';
+      }
+    
+    $r = $r . '</select> </p>';
+
+    $r = $r . '<p> Choisissez une catégorie :
+               <select name="categorie">
+               <option value="Senior"> Senior </option>
+               <option value="Junior"> Junior </option>
+               <option value="Cadet"> Cadet </option>
+               <option value="Minime"> Minime </option>
+               <option value="Benjamin"> Benjamin </option>
+               <option value="Poussin"> Poussin </option>
+               <option value="Baby"> Baby </option>
+               </select> </p>';
+
+    $r = $r . '<p> <input type="submit" value="Enregistrer" /> </p>';
+
+    return $r;
+  }
+
+  static function verifyEquipe()
+  {
+    $categorie = $_POST['categorie'];
+    $info_club = explode('_', $_POST['club']);
+
+    $sql = "INSERT INTO Equipe(ID_Equipe, Categorie, ID_Club) VALUES ('', '$categorie', '$info_club[0]')";
+    Database::query($sql);
+
+    return "Equipe ajoutée avec succés.\n";
   }
 
   static function isValidDate($date)
