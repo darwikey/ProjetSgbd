@@ -20,5 +20,9 @@ class Database
 		return self::$bdd->query($sql);
 	}
 
+    public static function lastId()
+    {
+      return self::$bdd->lastInsertId();
+    }
 }
 ?>
