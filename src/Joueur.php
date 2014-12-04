@@ -20,7 +20,8 @@ class Joueur
 			.'<li>Prénom : ' . $data['Prenom'] . '</li>'
 			.'<li>Adresse : ' . $data['Adresse'] . '</li>'
 			.'<li>Date de naissance : ' . $data['Date_Naissance'] . '</li>'
-			. '</ul></p>';
+			.'<li>Graphique : <a href="javascript:popup(\'Graphe.php?joueur=' . $data['ID_Membre'] . '&annee=2014\')"> cliquez ici</a></li>'
+			.'</ul></p>';
 
 		}
 

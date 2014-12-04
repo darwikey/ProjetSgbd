@@ -1,19 +1,27 @@
 <?php
 //type mime de l'image
 header('Content-type: image/png');
-
-//include_once('Database.php');
-// Init Database
-//Database::init();
+include_once('Database.php');
+//Init Database
+Database::init();
 	
-$idJoueur = 1;
-$annee = 2014;
+$idJoueur = intval($_GET['joueur']);
+$annee = intval($_GET['annee']);
 
-$bdd = new PDO('mysql:host=localhost;dbname=basketball', 'root', '', array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-
-$q1 = $bdd->query('Select Month(Date_Match) AS mois, 
+$q1 = Database::query('Select Month(Date_Match) AS mois,
 Sum(r.Points) as PointsMois,
-Sum(r.Fautes) as FautesMois
+Sum(r.Fautes) as FautesMois,
+sum((Select sum(r1.Points)
+	From Rencontrer r1
+    Where r1.ID_Rencontre = r.ID_Rencontre
+    and r1.ID_Equipe = r.ID_Equipe)
+    >
+    (Select sum(r1.Points)
+	From Rencontrer r1
+    Where r1.ID_Rencontre = r.ID_Rencontre)/2) as Gagne,
+    
+count(r.ID_Rencontre) as NombreMatch
+
 From Joueur j, Rencontrer r, Rencontre a
 Where j.ID_Membre =' . $idJoueur .
 ' and j.ID_Membre = r.ID_Membre
@@ -27,9 +35,10 @@ $elements=array();
 
 while($data = $q1->fetch())
 {
-	$max = max($max, $data['PointsMois'], $data['FautesMois']);
+	$perdu = $data['NombreMatch'] - $data['Gagne'];
+	$max = max($max, $data['PointsMois'], $data['FautesMois'], $data['Gagne'], $perdu);
 	
-	$elements[$data['mois']] = array($data['PointsMois'], $data['FautesMois']);	
+	$elements[$data['mois']] = array($data['PointsMois'], $data['FautesMois'], $data['Gagne'], $perdu);	
 }
 $q1->closeCursor();
 

@@ -6,6 +6,12 @@
 	<title>Basket manager</title>
 </head>
 
+<SCRIPT language="javascript">
+	function popup(page) {
+		window.open(page, "image");
+	}
+</SCRIPT>
+
 <body>
 <div id="conteneur">
 <div id="top" style="text-align: center"><a href="index.php"><img src="img/top.png"></a></div><br>
@@ -13,7 +19,7 @@
 <a href="index.php?page=club">Clubs</a> | <a href="index.php?page=equipe">Équipes</a> | <a href="index.php?page=joueur">Joueurs</a>
  | <a href="index.php?page=match">Matchs</a> | <a href="index.php?page=statistique">Statistiques</a> | <a href="index.php?page=ajouter">Ajouter</a> 
  </p></div>
-
+ 
 <?php 
 
 include_once('Page.php');
