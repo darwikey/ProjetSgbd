@@ -9,10 +9,10 @@ class Statistique
 		$r = '<form action="index.php?page=statistique" method="post">
 		<p>Afficher : 
 		<select name="choix">
-		<option value="matchs">matchs</option>
-		<option value="feuille_matchs">feuille de matchs</option>
-		<option value="joueurs_inscrits">joueurs inscrits</option>
-		<option value="meilleurs_joueurs">meilleurs joueurs</option>
+		<option value="matchs">Matchs</option>
+		<option value="feuille_matchs">Feuille de Matchs</option>
+		<option value="joueurs_inscrits">Joueurs Inscrits</option>
+		<option value="meilleurs_joueurs">Meilleurs Joueurs</option>
 		</select>
 		
 		à la date (AAAA-MM-JJ) : 

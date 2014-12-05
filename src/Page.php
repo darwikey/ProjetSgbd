@@ -20,7 +20,7 @@ function main()
 		}
       else if ($_GET['page'] == 'equipe')
 		{
-          echo Equipe::getList();
+          echo Equipe::whichInformation();
 		}
       else if ($_GET['page'] == 'joueur')
 		{
