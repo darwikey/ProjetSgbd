@@ -9,8 +9,6 @@ class Statistique
 		$r = '<form action="index.php?page=statistique" method="post">
 		<p>Afficher : 
 		<select name="choix">
-		<option value="matchs">Matchs</option>
-		<option value="feuille_matchs">Feuille de Matchs</option>
 		<option value="joueurs_inscrits">Joueurs Inscrits</option>
 		<option value="meilleurs_joueurs">Meilleurs Joueurs</option>
 		</select>
@@ -25,15 +23,7 @@ class Statistique
 		{
 			$date = $_POST['date'];
 			
-			if ($_POST['choix'] == 'matchs')
-			{
-				$r = $r . Statistique::getMatchs($date);
-			}
-			else if ($_POST['choix'] == 'feuille_matchs')
-			{
-				$r = $r . Statistique::getFeuilleMatchs($date);
-			}
-			else if ($_POST['choix'] == 'joueurs_inscrits')
+			if ($_POST['choix'] == 'joueurs_inscrits')
 			{
 				$r = $r . Statistique::getJoueursInscrits($date);
 			}
@@ -41,38 +31,6 @@ class Statistique
 			{
 				$r = $r . Statistique::getMeilleursJoueurs($date);
 			}
-		}
-		
-		return $r;
-	}
-
-
-	static function getMatchs($date)
-	{
-		$r = '';
-		$q = Database::query('Select ID_Rencontre From Rencontre Where Date_Match = \'' . $date . '\'');
-		
-		
-		while ($data = $q->fetch())
-		{
-			$r = $r . '<h1>Rencontre ' . $data['ID_Rencontre'] . ' : </h1><p>' 
-			. Match::getInfoMatch($data['ID_Rencontre']) . '</p>';
-		}
-		
-		return $r;
-	}
-	
-	
-	static function getFeuilleMatchs($date)
-	{
-		$r = '';
-		$q = Database::query('Select ID_Rencontre From Rencontre Where Date_Match = \'' . $date . '\'');
-		
-		
-		while ($data = $q->fetch())
-		{
-			$r = $r . '<h1>Rencontre ' . $data['ID_Rencontre'] . ' : </h1><p>' 
-			. Match::getMoreInfoMatch($data['ID_Rencontre']) . '</p>';
 		}
 		
 		return $r;

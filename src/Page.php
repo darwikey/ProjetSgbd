@@ -6,6 +6,7 @@ include_once('Joueur.php');
 include_once('Match.php');
 include_once('Statistique.php');
 include_once('Ajouter.php');
+include_once('Feuille.php');
 
 function main()
 {
@@ -50,6 +51,10 @@ function main()
 		{
           echo Ajouter::verifyEquipe();
 		}
+      else if ($_GET['page'] == 'feuille')
+        {
+          echo Feuille::getFeuilleMatch($_GET['rencontre']);
+        }
       else
 		{
           echo getFirstPage();

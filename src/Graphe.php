@@ -34,12 +34,12 @@ $max = 0;
 $elements=array();
 
 while($data = $q1->fetch())
-{
+  {
 	$perdu = $data['NombreMatch'] - $data['Gagne'];
 	$max = max($max, $data['PointsMois'], $data['FautesMois'], $data['Gagne'], $perdu);
 	
 	$elements[$data['mois']] = array($data['PointsMois'], $data['FautesMois'], $data['Gagne'], $perdu);	
-}
+  }
 $q1->closeCursor();
 
 //Mettre les mois en Francais dans un tableau
@@ -79,25 +79,25 @@ $py=$max/$nbOrdonne;
 $pasY=$absis;
 //Tracer les grides
 while($pasY<($hauteur-19))
-{
+  {
 	imagestring($courbe, 2,10 , $hauteur-$pasY-6, round($i), $noir);
 	imageline($courbe, 50, $hauteur-$pasY+1, $largeur-20,$hauteur-$pasY+1, $ligne);
 	$pasY+=$echelleY;
 	$i+=$py;
-}
+  }
 
 
 $pasX=45;
 for($mois = 0; $mois < 12; $mois++)
-{
+  {
 	//Ecrire le mois en Français en abscisse
 	imagestring($courbe, 2, $pasX, $hauteur-$absis+32 , $moisFr[$mois], $noir);
 
 	if (isset($elements[$mois]))
-	{
+      {
 		$idElement = 0;
 		foreach ($elements[$mois] as $donnee)
-		{
+          {
 			//Calculer la hauteur de la rectangle
 			$y=($hauteur) -($donnee * ($echelleY/$py))-$absis;
 
@@ -108,13 +108,13 @@ for($mois = 0; $mois < 12; $mois++)
 			
 			$pasX += $echelleX / count($elements[$mois]);
 			$idElement++;
-		}
-	}
+          }
+      }
 	else
-	{
+      {
 		$pasX+=$echelleX;;
-	}
-}
+      }
+  }
 
 //La legende
 $legende = array('Points', 'Fautes', 'Matchs gagnees', 'Match perdus');
@@ -122,14 +122,14 @@ $pasX=50;
 $Y=$hauteur-$absis+70;
 $index = 0;
 foreach ($legende as $libelle)
-{	
+  {	
 	//Le nom du poduit avec sa couleur
 	imagestring($courbe, 2, $pasX+25, $Y , $libelle, $couleur[$index]);
 	//Un petit rectangle 
 	imagefilledrectangle($courbe,$pasX , $Y, $pasX+20, $Y+12, $couleur[$index]);
 	$pasX+=140;
 	$index++;
-}
+  }
 
 imagepng($courbe);
 imagedestroy($courbe);
