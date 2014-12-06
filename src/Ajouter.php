@@ -115,8 +115,8 @@ class Ajouter
 
   static function verifyMembre()
   {
-    if(Ajouter::isValidDate($_POST['naissance']) and 
-    Ajouter::isValidDate($_POST['entree']))
+    if(Database::isValidDate($_POST['naissance']) and 
+    Database::isValidDate($_POST['entree']))
       {
         if($_POST['nom'] != '' and
         $_POST['prenom'] != '' and
@@ -310,18 +310,6 @@ class Ajouter
     Database::query($sql);
 
     return "Equipe ajoutée avec succés.\n";
-  }
-
-  static function isValidDate($date)
-  {
-    if(preg_match("#[0-9]{4}-[0-9]{2}-[0-9]{2}#", $date))
-      {
-        $cut = explode('-', $date);
-                
-        return checkdate($cut[1], $cut[2], $cut[0]);
-      }
-        
-    return false;
   }
 }
 

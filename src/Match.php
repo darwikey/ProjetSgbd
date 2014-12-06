@@ -5,56 +5,130 @@ include_once('Database.php');
 
 class Match 
 {
-	static function getList()
-	{
-		$q = Database::query('Select * From Rencontre');
-		$r = '';
-		
-		while ($data = $q->fetch())
-		{
-		
-			$r = $r . '<p> <h2> Match ' . $data['ID_Rencontre'] .':</h2><ul>'
-			. '<li>Date : ' . $data['Date_match'] . '</li>'
-			. Match::getInfoMatch($data['ID_Rencontre'])
-			. '</ul></p>';
+  static function whichInformation()
+  {
+    $r = '<form action="index.php?page=match" method="post">
+           <p> Entrez la date au format (AAAA-MM-JJ) :
+            <input type="text" name="date">
+            <input type="submit" value="Suivant">
+           </p>
+          </form>';
 
-		}
+    if(isset($_POST['date']))
+      {
+        if(Database::isValidDate($_POST['date']))
+          {
+            $r = $r . Match::getMatchAtDate();
+          }
+
+        else
+          {
+            $r = $r . "Date invalide.\n";
+          }
+      }
+    
+    else
+      {
+        $r = $r . Match::getMatch();
+      }
+
+    return $r;
+  }
+
+  static function getMatch()
+	{
+      $q = Database::query('Select Distinct r.ID_Equipe, c.Nom, e.Categorie, re.Date_match,
+                              sum(r.Points) as points, 
+                              sum(r.Fautes) as fautes 
+		                      
+                              From Rencontre re, Rencontrer r, Equipe e, Club c
+		   
+                              Where e.ID_Equipe = r.ID_Equipe
+                              and re.ID_Rencontre = r.ID_Rencontre
+		                      and e.ID_Club = c.ID_Club
+                              
+                              Group by e.ID_Equipe, r.ID_Rencontre
+                              Order by re.Date_match, re.ID_Rencontre, points DESC');
+
+        $data = $q->fetch();
+        $date_match = $data['Date_match'];
+		$r = '<p><h1>' .  $data['Date_match'] . '</h1> <ul>';
+
+        $preums = 1;
+		
+        do
+		{
+          if($date_match != $data['Date_match'])
+            {
+              $date_match = $data['Date_match'];
+              $r = $r . '</ul></p> <h1>' .  $data['Date_match'] . '</h1> <ul>';
+            }
+
+          if($preums)
+            {
+              $r = $r . '<li>' . $data['Nom'] . ' Score : ' . $data['points'] . ' Fautes : ' . $data['fautes'];
+              $preums = 0;
+            }
+
+          else
+            {
+              $r = $r . ' - ' . $data['Nom'] . ' Score : ' . $data['points'] . ' Fautes : ' . $data['fautes'] . '</li>';
+              $preums = 1;
+            }
+
+		} while ($data = $q->fetch());
+
+        $r = $r . '</ul> </p>';
 
 		$q->closeCursor();
 		
 		return $r;
 	}
+
+  static function getMatchAtDate()
+    {
+      $q = Database::query('Select Distinct r.ID_Equipe, c.Nom, e.Categorie, re.Date_match,
+                              sum(r.Points) as points,
+                              sum(r.Fautes) as fautes
+		                      
+                              From Rencontre re, Rencontrer r, Equipe e, Club c
+		   
+                              Where e.ID_Equipe = r.ID_Equipe
+                              and re.ID_Rencontre = r.ID_Rencontre
+                              and e.ID_Club = c.ID_Club
+                              and re.Date_match = \'' . $_POST['date'] . '\'
+                              
+                              Group by e.ID_Equipe, r.ID_Rencontre
+                              Order by re.Date_match, re.ID_Rencontre, points DESC');
+
+        $data = $q->fetch();
+        $r = '<p><h1>' .  $data['Date_match'] . '</h1> <ul>';
+
+        $preums = 1;
+		
+        do
+        {
+          if($preums)
+            {
+              $r = $r . '<li>' . $data['Nom'] . ' Score : ' . $data['points'] . ' Fautes : ' . $data['fautes'];
+              $preums = 0;
+            }
+
+          else
+            {
+              $r = $r . ' - ' . $data['Nom'] . ' Score : ' . $data['points'] . ' Fautes : ' . $data['fautes'] . '</li>';
+              $preums = 1;
+            }
+
+        } while ($data = $q->fetch());
+
+        $r = $r . '</ul> </p>';
+
+        $q->closeCursor();
+		
+        return $r;
+    }
 	
-	static function getInfoMatch($idRencontre)
-	{
-		$r = '';
-		$q = Database::query('Select c.Nom, e.Categorie, sum(r.Points) as SumPoints, sum(r.Fautes) as SumFautes 
-		From Rencontrer r, Equipe e, Club c
-		Where ID_Rencontre = ' .  $idRencontre
-		. ' and e.ID_Equipe = r.ID_Equipe
-		and e.ID_Club = c.ID_Club
-		Group by e.ID_Equipe
-		Order by SumPoints DESC');
-		
-		$win = true;
-		$score = 0;
-		while ($data = $q->fetch())
-		{
-			$r = $r . '<li>Club ' . $data['Nom'] . ' (équipe ' . $data['Categorie'] 
-			. ') - Score : ' . $data['SumPoints'] 
-			. ' - Fautes : ' . $data['SumFautes'] . '</li>';
-			
-			// On formate le texte en gras pour l'équipe gagnante ou ex aequo
-			if ($win OR ($score == $data['SumPoints']))
-			{
-				$r = '<b>' . $r . '</b>';
-			}
-			$win = false;
-			$score = $data['SumPoints'];
-		}
-		
-		return $r;
-	}
 	
 	static function getMoreInfoMatch($idRencontre)
 	{

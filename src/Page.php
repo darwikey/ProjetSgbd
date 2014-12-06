@@ -28,7 +28,7 @@ function main()
 		}
       else if ($_GET['page'] == 'match')
 		{
-          echo Match::getList();
+          echo Match::whichInformation();
 		}
       else if ($_GET['page'] == 'statistique')
 		{
