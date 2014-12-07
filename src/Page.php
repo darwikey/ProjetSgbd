@@ -51,6 +51,14 @@ function main()
 		{
           echo Ajouter::verifyEquipe();
 		}
+      else if ($_GET['page'] == 'ajouterMatchJoueur')
+		{
+          echo Ajouter::addMatchPlayer();
+		}
+      else if ($_GET['page'] == 'enregistrerMatch')
+		{
+          echo Ajouter::verifyMatch();
+		}
       else if ($_GET['page'] == 'feuille')
         {
           echo Feuille::getFeuilleMatch($_GET['rencontre']);

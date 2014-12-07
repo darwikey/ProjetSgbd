@@ -6,7 +6,7 @@ class Ajouter
 {
   static function getPage()
   {
-    $r = '<form action="index.php?page=ajouter" method="post">
+    $r = $r . '<form action="index.php?page=ajouter" method="post">
                <p> Que voulez-vous ajouter ?
                 <select name="choix">
                  <option value="Membre">Membre</option>
@@ -34,7 +34,7 @@ class Ajouter
 
         else if($_POST['choix'] == 'Match')
           {
-            $r = $r . Ajouter::addMatch();
+            $r = $r . Ajouter::addMatchDate();
           }
 
         else if($_POST['choix'] == 'Equipe')
@@ -48,7 +48,7 @@ class Ajouter
 
   /*
     Ajout d'un membre
-   */
+  */
 
   static function addMembre()
   {
@@ -86,13 +86,13 @@ class Ajouter
 
       $r = $r . '</select> </p>';
       
-      $r = $r . '<p> Activité : <br>
+      $r = $r . '<p> Activité : <br/>
                 <input type="checkbox" name="activite[]" value="Entraineur">
-                 Entraineur <br>
+                 Entraineur <br/>
                 <input type="checkbox" name="activite[]" value="Joueur">
-                 Joueur <br>                
+                 Joueur <br/>                
                 <input type="checkbox" name="activite[]" value="Responsable">
-                 Responsable <br>
+                 Responsable <br/>
                </p>
 
                <p> Entrez le poste (choisir aucun si pas responsable) :
@@ -215,7 +215,7 @@ class Ajouter
                           From Membre m
                           Where not exists (Select * from Responsable r where m.ID_Membre = r.ID_Membre)');
 
-    $r = $r . '<form action="index.php?page=ajouterClub" method="post">
+    $r = '<form action="index.php?page=ajouterClub" method="post">
                <p> Entrez le nom : 
                <input type="text" name="nom" /> </p>
                <p> Entrez la ville :
@@ -273,19 +273,19 @@ class Ajouter
   {
     $q = Database::query('Select Nom, ID_Club From Club');
 
-    $r = $r . '<form action="index.php?page=ajouterEquipe" method="post">
+    $r = '<form action="index.php?page=ajouterEquipe" method="post">
                <p> Choisissez le club : 
                <select name="club">';
 
-    while($data = $q->fetch())
-      {
-        $r = $r . '<option value="' . $data['ID_Club'] . '_' . $data['Nom'];
-        $r = $r . '">' . $data['ID_Club'] . ' ' . $data['Nom'] . '</option>';
-      }
+      while($data = $q->fetch())
+        {
+          $r = $r . '<option value="' . $data['ID_Club'] . '_' . $data['Nom'];
+          $r = $r . '">' . $data['ID_Club'] . ' ' . $data['Nom'] . '</option>';
+        }
     
-    $r = $r . '</select> </p>';
+      $r = $r . '</select> </p>';
 
-    $r = $r . '<p> Choisissez une catégorie :
+      $r = $r . '<p> Choisissez une catégorie :
                <select name="categorie">
                <option value="Senior"> Senior </option>
                <option value="Junior"> Junior </option>
@@ -296,9 +296,9 @@ class Ajouter
                <option value="Baby"> Baby </option>
                </select> </p>';
 
-    $r = $r . '<p> <input type="submit" value="Enregistrer" /> </p>';
+      $r = $r . '<p> <input type="submit" value="Enregistrer" /> </p>';
 
-    return $r;
+      return $r;
   }
 
   static function verifyEquipe()
@@ -310,6 +310,155 @@ class Ajouter
     Database::query($sql);
 
     return "Equipe ajoutée avec succés.\n";
+  }
+
+  // Ajout d'un match
+
+  static function addMatchDate()
+  {
+    $r = '<form action="index.php?page=ajouterMatchJoueur" method="post">
+                <p> Entrez une date pour le match (AAAA-MM-JJ) : 
+                 <input type="text" name="date" />
+                </p>';
+
+    $q = Database::query("Select c.Nom, e.Categorie, e.ID_Equipe from Club c, Equipe e where c.ID_Club = e.ID_Club");
+    
+    $r = $r . '<p> Club hôte :
+                <select name="locaux">';
+
+   $result = $q->fetchAll();
+      
+    foreach($result as $data)
+      {
+        $r = $r . '<option value="'. $data['Nom'].'_'.$data['Categorie'].'_'.$data['ID_Equipe'].'">'. $data['Nom'].' - '.$data['Categorie'] . '</option>';
+      }
+    
+    $r = $r . '</select>';
+    
+    $r = $r . '</p> <p> Club visiteur :
+                     <select name="visiteurs">';
+
+    
+        
+    foreach($result as $data)
+      { 
+        $r = $r . '<option value="'. $data['Nom'].'_'.$data['Categorie'].'_'.$data['ID_Equipe'].'">'. $data['Nom'].' - '.$data['Categorie'] . '</option>';
+      } 
+    
+    $r = $r . '</select>';
+    
+    $r = $r . '</p> <p> <input type="submit" value="Suivant" /> </p>';            
+    
+    return $r;
+  }
+  
+  static function addMatchPlayer()
+  {
+    if(isset($_POST['date']) and Database::isValidDate($_POST['date']))
+      {        
+        $locaux    = explode('_', $_POST['locaux']);
+        $visiteurs = explode('_', $_POST['visiteurs']);
+        $date      = $_POST['date'];
+
+        if(($locaux[0] != $visiteurs[0]) and ($locaux[1] == $visiteurs[1]))
+          {
+            $q = Database::query('Select distinct m.ID_Membre, m.Nom, m.Prenom, j.Num_Licence, c.Nom as NomClub 
+                                  From Membre m, Joueur j, Club c, Rencontre re, Rencontrer rr
+                                  Where ((c.Nom = \''.$locaux[0].'\') or (c.Nom = \''.$visiteurs[0].'\'))
+                                  and c.ID_Club = m.ID_Club
+                                  and m.ID_Membre = j.ID_Membre
+                                  and m.ID_Membre = rr.ID_Membre
+                                  and rr.ID_Rencontre = re.ID_Rencontre
+                                  and re.Date_match != \''.$date.'\'
+                                  Order by c.Nom');
+
+            $data = $q->fetch();
+            $nom_club = $data['NomClub'];
+
+            $r = $r . '<form action="index.php?page=enregistrerMatch&id_hote='.$locaux[2].'&id_visiteur='.$visiteurs[2].'&date='.$date.'" method="post">
+                       <p> Selection des joueurs de ' . $nom_club . ' : <br/>';
+
+            do
+              {
+                $r = $r . '<input type="checkbox" name="joueurs_1[]" value="'.$data['ID_Membre'].'">'
+                  . $data['Num_Licence'] . ' ' . $data['Nom'] . ' ' . $data['Prenom'] .'</input> <br/>';
+
+              }while($data = $q->fetch() and $nom_club == $data['NomClub']);
+
+            $nom_club = $data['NomClub'];
+            $r = $r . '</p> <p> Selection des joueurs de ' . $nom_club . ' : <br/>';
+
+            do
+              {
+                $r = $r . '<input type="checkbox" name="joueurs_2[]" value="'.$data['ID_Membre'].'">'
+                  . $data['Num_Licence'] . ' ' . $data['Nom'] . ' ' . $data['Prenom'] .'</input> <br/>';
+
+              }while($data = $q->fetch() and $nom_club == $data['NomClub']);
+
+            $r = $r . '<input type="submit" value="Suivant">';
+          }
+
+        else
+          {
+            $r = "Problème selection équipe.\n";
+          }
+      }
+    
+    else if(isset($_POST['date']))
+      {
+        $r = "Date invalide ou manquante.\n";
+      }
+
+    return $r;
+  }
+
+  static function verifyMatch()
+  {
+    $id_hote = $_GET['id_hote'];
+    $id_visiteur = $_GET['id_visiteur'];
+
+    $date = $_GET['date'];
+
+    if(isset($_POST['joueurs_1']) and isset($_POST['joueurs_2']))
+      {
+        $sql = "INSERT INTO Rencontre(ID_Rencontre, Date_match) VALUES (' ', '$date')";
+        
+        Database::query($sql);
+        
+        $id_rencontre = Database::lastId();
+
+        $joueur_hote = $_POST['joueurs_1'];
+
+        foreach($joueur_hote as $joueur)
+          {
+            $points = rand(0,50);
+            $fautes = rand(0,5);
+
+            $sql = "INSERT INTO Rencontrer(ID_Membre, ID_Rencontre, ID_Equipe, Points, Fautes) VALUES ('$joueur', '$id_rencontre', '$id_hote', '$points','$fautes')";
+
+            Database::query($sql);
+          }
+
+        $joueur_visiteur = $_POST['joueurs_2'];
+
+        foreach($joueur_visiteur as $joueur)
+          {
+            $points = rand(0,50);
+            $fautes = rand(0,5);
+
+            $sql = "INSERT INTO Rencontrer(ID_Membre, ID_Rencontre, ID_Equipe, Points, Fautes) VALUES ('$joueur', '$id_rencontre', '$id_visiteur', '$points','$fautes')";
+            
+            Database::query($sql);
+          }
+
+        return "Match enregistré.\n";
+        
+      }
+
+    else
+      {
+        return "Pas de joueurs sélectionnés.\n";
+      }
   }
 }
 
