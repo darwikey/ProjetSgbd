@@ -363,41 +363,61 @@ class Ajouter
         if(($locaux[0] != $visiteurs[0]) and ($locaux[1] == $visiteurs[1]))
           {
             $q = Database::query('Select distinct m.ID_Membre, m.Nom, m.Prenom, j.Num_Licence, c.Nom as NomClub 
-                                  From Membre m, Joueur j, Club c, Rencontre re, Rencontrer rr
-                                  Where ((c.Nom = \''.$locaux[0].'\') or (c.Nom = \''.$visiteurs[0].'\'))
+                                  From Membre m, Joueur j, Club c
+
+                                  Where c.Nom in (\''.$locaux[0].'\',\''.$visiteurs[0].'\')
                                   and c.ID_Club = m.ID_Club
                                   and m.ID_Membre = j.ID_Membre
-                                  and m.ID_Membre = rr.ID_Membre
-                                  and rr.ID_Rencontre = re.ID_Rencontre
-                                  and re.Date_match != \''.$date.'\'
+                                  and m.ID_Membre not in (Select m.ID_Membre
+                                                          From Rencontre re, Rencontrer rr, Membre m
+                                                          where re.Date_match = \''.$date.'\'
+                                                          and re.ID_Rencontre = rr.ID_rencontre
+                                                          and rr.ID_Membre = m.ID_Membre)
+
                                   Order by c.Nom');
 
-            $data = $q->fetch();
-            $nom_club = $data['NomClub'];
-
-            $r = $r . '<form action="index.php?page=enregistrerMatch&id_hote='.$locaux[2].'&id_visiteur='.$visiteurs[2].'&date='.$date.'" method="post">
+            if($data = $q->fetch())
+              {
+                $nom_club = $data['NomClub'];
+                
+                $r = $r . '<form action="index.php?page=enregistrerMatch&id_hote='.$locaux[2].'&id_visiteur='.$visiteurs[2].'&date='.$date.'" method="post">
                        <p> Selection des joueurs de ' . $nom_club . ' : <br/>';
 
-            do
+                do
+                  {
+                    $r = $r . '<input type="checkbox" name="joueurs_1[]" value="'.$data['ID_Membre'].'">'
+                      . $data['Num_Licence'] . ' ' . $data['Nom'] . ' ' . $data['Prenom'] .'</input> <br/>';
+                    
+                  }while($data = $q->fetch() and $nom_club == $data['NomClub']);
+
+                $nom_club = $data['NomClub'];
+
+                if($data)
+                  {
+                    $r = $r . '</p> <p> Selection des joueurs de ' . $nom_club . ' : <br/>';
+                    
+                    do
+                      {
+                        $r = $r . '<input type="checkbox" name="joueurs_2[]" value="'.$data['ID_Membre'].'">'
+                          . $data['Num_Licence'] . ' ' . $data['Nom'] . ' ' . $data['Prenom'] .'</input> <br/>';
+                        
+                      }while($data = $q->fetch() and $nom_club == $data['NomClub']);
+                    
+                    $r = $r . '<input type="submit" value="Suivant">';
+                  }
+
+                else
+                  {
+                    return "Pas de joueurs disponibles pour une des équipes.\n";
+                  }
+              }
+            
+            else
               {
-                $r = $r . '<input type="checkbox" name="joueurs_1[]" value="'.$data['ID_Membre'].'">'
-                  . $data['Num_Licence'] . ' ' . $data['Nom'] . ' ' . $data['Prenom'] .'</input> <br/>';
-
-              }while($data = $q->fetch() and $nom_club == $data['NomClub']);
-
-            $nom_club = $data['NomClub'];
-            $r = $r . '</p> <p> Selection des joueurs de ' . $nom_club . ' : <br/>';
-
-            do
-              {
-                $r = $r . '<input type="checkbox" name="joueurs_2[]" value="'.$data['ID_Membre'].'">'
-                  . $data['Num_Licence'] . ' ' . $data['Nom'] . ' ' . $data['Prenom'] .'</input> <br/>';
-
-              }while($data = $q->fetch() and $nom_club == $data['NomClub']);
-
-            $r = $r . '<input type="submit" value="Suivant">';
+                return "Pas de joueurs disponibles pour les deux équipes.\n";
+              }
           }
-
+        
         else
           {
             $r = "Problème selection équipe.\n";
@@ -408,10 +428,10 @@ class Ajouter
       {
         $r = "Date invalide ou manquante.\n";
       }
-
+    
     return $r;
   }
-
+  
   static function verifyMatch()
   {
     $id_hote = $_GET['id_hote'];
