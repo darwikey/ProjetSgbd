@@ -13,17 +13,16 @@ class Equipe
               <option value="Equipe">Liste équipe</option>
              </select>
              <input type="submit" value="Suivant">
-            </p>
-          </form>';
+            </p>';
 
-    if($_POST['choix'] == 'Equipe')
+    if(isset($_POST['choix']) and $_POST['choix'] == 'Equipe')
       {
         $r = $r . Equipe::getEquipeListe();
       }
 
     else
       {
-        $r = $r . '<form action="index.php?page=equipe" method="post">
+        $r = $r . '
                <p> Choisissez une catégorie :
                <select name="categorie">
                <option value="Senior"> Senior </option>
@@ -40,11 +39,17 @@ class Equipe
       }
     
 
-    return $r;
+    return $r . '</form>';
   }
   
   static function getClassement()
   {
+	if (! isset($_POST['categorie']))
+	{
+		return;
+	}
+
+	$r = '';
     $q = Database::query('
 			Select c.Nom,
             sum(e.Points > t.Points/2) as gagne,
@@ -99,6 +104,7 @@ class Equipe
 
   static function getEquipeListe()
   {
+	$r = '';
     $q = Database::query('
 			Select c.Nom, e.Categorie,
 			sum(e.Points > t.Points/2) as gagne,

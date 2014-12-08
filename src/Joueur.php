@@ -7,6 +7,7 @@ class Joueur
 {
   static function getList()
   {
+    $r = '';
     $q = Database::query('Select c.Nom as Nom_Club, j.ID_Membre, j.Num_Licence, m.Date_Entree, m.Nom, m.Prenom, j.Adresse, j.Date_Naissance,
 			avg(r.Points) as MoyennePoints,
 			std(r.Points) as EcartTypePoints,
@@ -36,7 +37,7 @@ class Joueur
 
         // Informations joueur
         $r = $r . '<li> <strong>' . $data['Nom'] . ' ' . $data['Prenom'] . '</strong> <br/>'
-          .'Date d\'entrée dans le club ' . $data['NomClub'] . ' : ' . $data['Date_Entree'] . '<br/>'
+          .'Date d\'entrée dans le club ' . $data['Nom_Club'] . ' : ' . $data['Date_Entree'] . '<br/>'
           .'Numéro de licence : ' . $data['Num_Licence'] . '<br/>'
           .'Adresse : ' . $data['Adresse'] . '<br/>'
           .'Date de naissance : ' . $data['Date_Naissance'] . '<br/>'

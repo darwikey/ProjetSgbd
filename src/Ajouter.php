@@ -6,6 +6,7 @@ class Ajouter
 {
   static function getPage()
   {
+	$r = '';
     $r = $r . '<form action="index.php?page=ajouter" method="post">
                <p> Que voulez-vous ajouter ?
                 <select name="choix">
@@ -354,6 +355,7 @@ class Ajouter
   
   static function addMatchPlayer()
   {
+	$r = '';
     if(isset($_POST['date']) and Database::isValidDate($_POST['date']))
       {        
         $locaux    = explode('_', $_POST['locaux']);
