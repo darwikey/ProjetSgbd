@@ -27,6 +27,10 @@
 \usepackage{latexsym}
 \usepackage{bm}
 
+%Listings
+\usepackage{listings}
+\lstset{language=SQL}
+
 %Titre et auteurs
 \title{\textbf{SGBD - Projet Sport }\\\textit{Rapport du travail fourni}}
 
@@ -46,9 +50,86 @@
 
 \chapter*{Introduction}
 
+Le projet consistait en la réalisation d'une base de données gérant les rencontres entre les clubs de basketball d'une fédération. Il fallait implémenter des requêtes permettant d'obtenir des informations sur les clubs, les équipes et les joueurs. Tel que les meilleurs joueurs, les classement des équipes au sein d'un club et/ou de la fédération. Afin d'interargir avec la base et la faire évoluer simplement, des scripts d'insertion, de modification et de suppression devait être implémenté via des formulaires python, java, php.
+
 \chapter{Présentation du modèle}
 
+\section{Schéma Entité-Association}
+
+Plusieurs choix ont été fait dans la réalisation de la base de données : 
+
+\begin{itemize}
+
+\item Les joueurs n'appartiennent pas à une équipe mais à un club. Cela offre la possibilité de changer d'équipe un joueur à chaque rencontre.
+
+\item Joueur, Responsable et Entraineur hérite de Membre. Par la contrainte de totalité un Membre doit être soit Joueur ou Responsable ou Entraineur, soit les trois à la fois, soit deux parmis les trois.
+
+\item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe.
+
+\end{itemize}
+
 \chapter{Implémentation}
+
+L'interface entre l'utilisateur et la base de donnée a été faite en php. Les sous-parties suivantes présenteront les requêtes implémentées par onglet du site internet.
+
+\section{Clubs}
+
+Cette partie liste les différents clubs de la fédération avec pour renseignement : la ville, les responsables, le nombre d'équipe et le nombre de joueurs. Deux sous-requêtes sont implémentées dans \ref{club} afin d'obtenir le nombre d'équipes et de joueurs du club. 
+
+\lstset{frame=single, caption={Requete information sur les clubs}, label=club}
+\begin{lstlisting}
+
+Select c.Nom, c.Ville, c.ID_Club,
+ (Select count(*) 
+  From Equipe e
+  Where c.ID_club = e.ID_Club) as NombreEquipe,
+
+ (Select count(*) 
+  From Joueur j, Membre m
+  Where c.ID_Club = m.ID_Club
+  and m.ID_Membre = j.ID_Membre) as NombreJoueur
+
+From Club c;
+\end{lstlisting}
+
+\textbf{Pourquoi avoir fait deux requêtes supplémentaires pour obtenir le nombre de matchs gagnés et les responsables ?}
+
+\section{Equipes}
+
+Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML5.
+
+\lstset{frame=single, caption={Requete classement des équipes de la fédération par catégorie}, label=club}
+\begin{lstlisting}
+
+  Select c.Nom,
+  sum(e.Points > t.Points/2) as gagne,
+  sum(e.Points = t.Points/2) as egual,
+  sum(e.Points < t.Points/2) as perdu
+  
+  From
+  
+  (Select ID_Rencontre, e1.*,
+  sum(r1.Points) as Points
+  From Equipe e1, Rencontrer r1
+  Where e1.ID_Equipe = r1.ID_Equipe
+  Group by r1.ID_Rencontre, e1.ID_Equipe) e,
+
+  (Select ID_Rencontre,
+  sum(r1.Points) as Points
+  From Rencontrer r1
+  Group by r1.ID_Rencontre) t,
+  
+  Club c
+
+  Where e.ID_Rencontre = t.ID_Rencontre
+  and e.ID_Club = c.ID_Club
+  and e.Categorie = '$_POST['categorie']'
+  Group by e.ID_Equipe
+  Order by gagne DESC, egual DESC, perdu DESC
+
+\end{lstlisting}
+
+Le classement peut-être restreint aux clubs sans distinction des catégories. La requête est sensiblement la même, si ce n'est que la catégorie n'apparait plus comme un critère de sélection et le nom du club devient le première critère d'ordonnancement de la table (avant 'gagne', 'egual' et 'perdu'). 
 
 \chapter*{Conclusion}
 
