@@ -96,7 +96,7 @@ From Club c;
 
 \section{Equipes}
 
-Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML5.
+Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML.
 
 \lstset{frame=single, caption={Requete classement des équipes de la fédération par catégorie}, label=club}
 \begin{lstlisting}
@@ -130,6 +130,26 @@ Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes
 \end{lstlisting}
 
 Le classement peut-être restreint aux clubs sans distinction des catégories. La requête est sensiblement la même, si ce n'est que la catégorie n'apparait plus comme un critère de sélection et le nom du club devient le première critère d'ordonnancement de la table (avant 'gagne', 'egual' et 'perdu'). 
+
+\section{Joueurs}
+Dans l'onglet 'Joueurs', la liste des joueurs s'affiche avec pour chaque joueur des informations sur 
+
+\lstset{frame=single, caption={Requete classement des équipes de la fédération par catégorie}, label=club}
+\begin{lstlisting}
+Select c.Nom as Nom_Club, j.ID_Membre, j.Num_Licence, m.Date_Entree, m.Nom, m.Prenom, j.Adresse, j.Date_Naissance,
+  avg(r.Points) as MoyennePoints,
+  std(r.Points) as EcartTypePoints,
+  avg(r.Fautes) as MoyenneFautes,
+  std(r.Fautes) as EcartTypeFautes
+
+From Membre m, Joueur j, Rencontrer r, Rencontre a, Club c
+Where m.ID_Membre = j.ID_Membre
+  and r.ID_Membre = m.ID_Membre
+  and a.ID_Rencontre = r.ID_Rencontre
+  and Year(a.Date_match) = Year(Now())
+  and c.ID_Club = m.ID_Club
+Group by c.Nom, j.ID_Membre
+\end{lstlisting}
 
 \chapter*{Conclusion}
 

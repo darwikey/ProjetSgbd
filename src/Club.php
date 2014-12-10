@@ -51,18 +51,6 @@ class Club
 		
 		return $r . '</ul>';
 	}
-	
-	static function getNombreMatchsGagnes($idClub)
-	{
-		$r = '';
-		//TODO
-		$q = Database::query('Select * From Membre m, Responsable r Where r.ID_Club = ' . $idClub);
-
-		
-		$q->closeCursor();
-		
-		return $r;
-	}
 }
 
 ?>
