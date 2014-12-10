@@ -56,13 +56,20 @@ Le projet consistait en la réalisation d'une base de données gérant les renco
 
 \section{Schéma Entité-Association}
 
-Plusieurs choix ont été fait dans la réalisation de la base de données : 
+\begin{figure}[h]
+  \centering
+    \includegraphics[scale=0.7]{Schema_EA.png}
+    \label{fig:schema_ea}
+    \caption{Schéma Entité-Association établi par l'équipe}
+\end{figure}
+
+D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la structuration de la base de données : \\
 
 \begin{itemize}
 
-\item Les joueurs n'appartiennent pas à une équipe mais à un club. Cela offre la possibilité de changer d'équipe un joueur à chaque rencontre.
+\item Les joueurs n'appartiennent pas à une équipe mais à un club. Cela offre la possibilité de changer d'équipe un joueur à chaque rencontre. \\
 
-\item Joueur, Responsable et Entraineur hérite de Membre. Par la contrainte de totalité un Membre doit être soit Joueur ou Responsable ou Entraineur, soit les trois à la fois, soit deux parmis les trois.
+\item Joueur, Responsable et Entraineur hérite de Membre. Par la contrainte de totalité un Membre doit être soit Joueur ou Responsable ou Entraineur, soit les trois à la fois, soit deux parmis les trois. \\
 
 \item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe.
 
@@ -95,8 +102,6 @@ Select c.Nom, c.Ville, c.ID\_Club,
 
 From Club c;
 \end{lstlisting}
-
-\textbf{Pourquoi avoir fait deux requêtes supplémentaires pour obtenir le nombre de matchs gagnés et les responsables ?}
 
 \section{Equipes}
 
@@ -137,7 +142,7 @@ Le classement peut-être restreint aux clubs sans distinction des catégories. L
 
 
 \section{Joueurs}
-Dans l'onglet 'Joueurs', on affiche chaque joueur avec des informations comme son nom, prénom, numéro de licence... On calcule aussi la moyenne des points marqués et des fautes faites, ainsi que leur écart type.
+Dans l'onglet 'Joueurs', les joueurs de la fédération sont classés par clubs avec des informations comme le nom, prénom, numéro de licence... La moyenne des points marqués et des fautes faites, ainsi que leur écart type sont calculés via les fonctions SQL ``avg'' et ``std''. La requête \ref{joueur} permet de collecter ces informations dans les tables de la base de données.
 
 \lstset{frame=single, caption={Requête classement des joueurs par club}, label=joueur}
 \begin{lstlisting}
@@ -156,11 +161,11 @@ Where m.ID\_Membre = j.ID\_Membre
 Group by c.Nom, j.ID\_Membre
 \end{lstlisting}
 
-La ligne '\textit{and Year(a.Date\_match) = Year(Now())}' permet de selectionner seulement les matchs se déroulant pendant la saison courante.
+La ligne '\textit{and Year(a.Date\_match) = Year(Now())}' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
 
 
 \section{Graphique}
-Grace à l'utilisation de l'extension gd2 de php, nous avons la possibilité de créer des graphiques. Pour un joueur et une année donnée nous traçons pour chaque mois, les points gagnés, les fautes, le nombre de matchs gagnés et perdus.\\
+Grace à l'utilisation de l'extension gd2 de PHP, il est possible de créer des graphiques. Pour chaque mois d'une année et un joueur sont tracés, les points gagnés, les fautes faites et le nombre de matchs gagnés et perdus. La figure \ref{fig:graph} est un exemple de graphique obtenu après application de la requête \ref{graphique}.
 
 \lstset{frame=single, caption={Requête des statistiques pour un joueur}, label=graphique}
 \begin{lstlisting}
@@ -191,6 +196,7 @@ Order by mois ASC
 \begin{figure}[h]
   \centering
     \includegraphics[scale=0.5]{graphe.png}
+    \label{fig:graph}
     \caption{Graphique des matchs pour un joueur au cours de la saison 2014}
 \end{figure}
 
