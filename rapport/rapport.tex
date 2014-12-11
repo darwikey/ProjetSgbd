@@ -69,7 +69,7 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 
 \item Les joueurs n'appartiennent pas à une équipe mais à un club. Cela offre la possibilité de changer d'équipe un joueur à chaque rencontre. \\
 
-\item Joueur, Responsable et Entraineur hérite de Membre. Par la contrainte de totalité un Membre doit être soit Joueur ou Responsable ou Entraineur, soit les trois à la fois, soit deux parmis les trois. \\
+\item Joueur, Responsable et Entraineur héritent de Membre. Par la contrainte de totalité un Membre doit être soit Joueur ou Responsable ou Entraineur, soit les trois à la fois, soit deux parmis les trois. \\
 
 \item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe.
 
@@ -77,6 +77,13 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 
 \section{Schéma Relationnel}
 
+On peut ensuite passer au schéma relationnel: \\
+Club(\underline{ID\_Club}, Nom, Ville) \\ 
+Membre(\underline{ID\_Membre}, ID\_Club, Nom, Prenom, Date\_Entree) \\
+Joueur(\underline{Num\_Licence}, ID\_Membre, Date\_Naissance, Adresse) \\ 
+Rencontrer(\underline{ID\_Membre}, \underline{ID\_Rencontre}, ID\_Equipe, Points, Fautes) \\
+Sentrainer(\underline{ID\_Membre}, \underline{Date\_Entrainement}, ID\_Equipe) \\
+Entrainer(\underline{ID\_Membre}, \underline{Date\_Entrainement}, ID\_Equipe) 
 
 
 \chapter{Implémentation}
@@ -138,7 +145,7 @@ Order by gagne DESC, egual DESC, perdu DESC
 
 \end{lstlisting}
 
-Le classement peut-être restreint aux clubs sans distinction des catégories. La requête est sensiblement la même, si ce n'est que la catégorie n'apparait plus comme un critère de sélection et le nom du club devient le première critère d'ordonnancement de la table (avant 'gagne', 'egual' et 'perdu'). 
+Le classement peut-être restreint aux clubs sans distinction des catégories. La requête est sensiblement la même, si ce n'est que la catégorie n'apparait plus comme un critère de sélection et le nom du club devient le premier critère d'ordonnancement de la table (avant 'gagne', 'egual' et 'perdu'). 
 
 
 \section{Joueurs}
