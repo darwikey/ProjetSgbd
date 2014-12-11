@@ -78,25 +78,30 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 \section{Schéma Relationnel}
 
 On peut ensuite passer au schéma relationnel: \\
-Club(\underline{ID\_Club}, Nom, Ville) \\ 
-Membre(\underline{ID\_Membre}, \#ID\_Club, Nom, Prenom, Date\_Entree) \\
-Entraineur(\underline{\#ID\_Membre}) \\
-Joueur(\underline{Num\_Licence}, \#ID\_Membre, Date\_Naissance, Adresse) \\ 
-Responsable(\underline{\#ID\_Membre}) \\
-Rencontre (\underline{ID\_Rencontre}, Date\_Match) \\
-Equipe(\underline{ID\_Equipe}, Categorie, \#ID\_Club) \\
-Rencontrer(\underline{\#ID\_Membre}, \underline{ID\_Rencontre}, \#ID\_Equipe, Points, Fautes) \\
-Sentrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) \\
-Entrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) 
+
+\begin{itemize}
+
+\item Club(\underline{ID\_Club}, Nom, Ville) \\ 
+\item Membre(\underline{ID\_Membre}, \#ID\_Club, Nom, Prenom, Date\_Entree) \\
+\item Entraineur(\underline{\#ID\_Membre}) \\
+\item Joueur(\underline{Num\_Licence}, \#ID\_Membre, Date\_Naissance, Adresse) \\ 
+\item Responsable(\underline{\#ID\_Membre}) \\
+\item Rencontre (\underline{ID\_Rencontre}, Date\_Match) \\
+\item Equipe(\underline{ID\_Equipe}, Categorie, \#ID\_Club) \\
+\item Rencontrer(\underline{\#ID\_Membre}, \underline{ID\_Rencontre}, \#ID\_Equipe, Points, Fautes) \\
+\item Sentrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) \\
+\item Entrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) 
+
+\end{itemize}
 
 
 \chapter{Implémentation}
 
-L'interface entre l'utilisateur et la base de donnée a été faite en php. Les sous-parties suivantes présenteront les requêtes implémentées par onglet du site internet.
+L'interface entre l'utilisateur et la base de données a été faite en PHP. Les sous-parties suivantes présenteront les requêtes implémentées par onglet du site internet.
 
 \section{Clubs}
 
-Cette partie liste les différents clubs de la fédération avec pour renseignement : la ville, les responsables, le nombre d'équipes et le nombre de joueurs. Deux sous-requêtes sont implémentées dans \ref{club} afin d'obtenir le nombre d'équipes et de joueurs du club. 
+Cette partie liste les différents clubs de la fédération avec pour renseignement : la ville, les responsables, le nombre d'équipes et le nombre de joueurs. Deux sous-requêtes utilisant la fonction d'agrégation ``count'' sont implémentées dans \ref{club} afin d'obtenir le nombre d'équipes et de joueurs du club. 
 
 \lstset{frame=single, caption={Requete information sur les clubs}, label=club}
 \begin{lstlisting}
@@ -116,7 +121,7 @@ From Club c;
 
 \section{Equipes}
 
-Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML.
+Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML. La fonction d'agrégation ``sum'' est utilisé afin d'obtenir le nombre de matchs gagnés, ex-aequos et perdus. 
 
 \lstset{frame=single, caption={Requête classement des équipes de la fédération par catégorie}, label=club}
 \begin{lstlisting}
@@ -153,7 +158,7 @@ Le classement peut-être restreint aux clubs sans distinction des catégories. L
 
 
 \section{Joueurs}
-Dans l'onglet 'Joueurs', les joueurs de la fédération sont classés par clubs avec des informations comme le nom, prénom, numéro de licence... La moyenne des points marqués et des fautes faites, ainsi que leur écart type sont calculés via les fonctions SQL ``avg'' et ``std''. La requête \ref{joueur} permet de collecter ces informations dans les tables de la base de données.
+Dans l'onglet 'Joueurs', les joueurs de la fédération sont classés par clubs avec des informations comme le nom, prénom, numéro de licence... La moyenne des points marqués et des fautes faites, ainsi que leur écart type sont calculés via les fonctions d'agrégation SQL ``avg'' et ``std''. La requête \ref{joueur} permet de collecter ces informations dans les tables de la base de données.
 
 \lstset{frame=single, caption={Requête classement des joueurs par club}, label=joueur}
 \begin{lstlisting}
@@ -214,7 +219,7 @@ Order by mois ASC
 
 
 \section{Matchs}
-Une requête permet de lister les matchs et pour chaque match on affiche le score des deux equipes.
+Une requête permet de lister les matchs et pour chaque match est affiché le score des deux equipes.
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
@@ -232,7 +237,7 @@ Group by e.ID_Equipe, r.ID_Rencontre
 Order by re.Date_match, re.ID_Rencontre, points DESC');
 \end{lstlisting}
 
-Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre.
+Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre en ajoutant une condition à la clause ``Where''.
 
 
 \section{Feuilles de matchs}
