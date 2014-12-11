@@ -11,9 +11,6 @@ class Modifier
                <p> Que voulez-vous modifier ?
                 <select name="choix">
                  <option value="Membre">Membre</option>
-                 <option value="Club">Club</option>
-                 <option value="Match">Match</option>
-                 <option value="Equipe">Equipe</option>
                 </select>
 
                 <input type="submit" value="Suivant">
@@ -94,26 +91,28 @@ class Modifier
       {
         $choosen_one = $_POST['joueur'];
 
-        $info_joueur = Database::query('Select a.*, Responsable.Activite
-                                        From
-                                       (Select m.*, j.Date_Naissance, j.Adresse,
-                                        (Select count(*) 
-                                         From Entraineur
-                                         Where ID_Membre = \''.$choosen_one.'\') as entraine,
-                                     
-                                        (Select count(*)
-                                         From Joueur
-                                         Where ID_Membre = \''.$choosen_one.'\') as joue,
+        $info_joueur = Database::query('SELECT r.Activite, m.*, j.Date_Naissance, j.Adresse,
 
-                                        (Select count(*)
-                                         From Responsable
-                                         Where ID_Membre = \''.$choosen_one.'\') as gere
+                                               (SELECT COUNT(*) 
+                                                FROM Entraineur e1
+                                                WHERE e1.ID_Membre = \''.$choosen_one.'\') AS entraine,
 
-                                         From Membre m, Joueur j
-                                         Where m.ID_Membre = \''.$choosen_one.'\'
-                                         And   j.ID_Membre = m.ID_Membre) a 
-                                         Left Outer Join Responsable
-                                         On Responsable.ID_Membre = \''.$choosen_one.'\'');
+                                               (SELECT COUNT(*)
+                                                FROM Joueur j1
+                                                WHERE j1.ID_Membre = \''.$choosen_one.'\') AS joue,
+
+                                               (SELECT COUNT(*)
+                                                FROM Responsable r1
+                                                WHERE r1.ID_Membre = \''.$choosen_one.'\') AS gere
+
+
+                                        FROM (Membre m 
+                                              INNER JOIN Joueur j
+                                              ON j.ID_Membre = m.ID_Membre)
+                                             LEFT OUTER JOIN Responsable r
+                                             ON r.ID_Membre = \''.$choosen_one.'\'
+
+                                        WHERE m.ID_Membre = \''.$choosen_one.'\'');
 
         $data           = $info_joueur->fetch();
         $nom_joueur     = $data['Nom'];

@@ -372,7 +372,41 @@ ORDER BY c.Nom
 
 \end{lstlisting}  
 
-Les informations sont ajoutées aux tables Rencontrer et Rencontre avec des fautes et des points attribués de manière aléatoire à chaque joueurs.
+Les informations sont ajoutées aux tables Rencontrer et Rencontre avec des fautes et des points attribués de manière aléatoire à chaque joueurs. Le nombre de joueurs participants aux matchs n'est pas vérifié, il est toutefois impossible de ne pas choisir de joueurs pour une équipe. Le nombre minimum de joueurs pouvant jouer est donc un, il n'y a pas de maximum.
+
+\section{Modifier}
+
+La modification de club et d'équipes n'ayant pas beaucoup d'intérêt nous avons décidé de n'implémenter que la modification des membres sans pouvoir toutefois modifier leur rôle en tant que responsable au sein d'un club. Cette décision a été prise pour nous simplifier la tâche par manque de temps. De même la modification de matchs n'est pas prise en compte du fait de la lourdeur de l'implémentation (changement des résultats, validité des résultats, disponibilités des joueurs, ajout ou retraits de joueurs etc). \\
+
+Dans un premier temps il faut sélectionner le club dont les différents noms sont obtenus via la requête simple ``SELECT Nom, ID\_Club FROM Club'' déjà vu auparavant. Une fois le club sélectionné une autre requête permet d'en obtenir les membres. Enfin, après la sélection du joueur, ses informations s'affiche dans un formulaire pré-rempli grâce à la requête \ref{infosJoueur}.
+
+\lstset{frame=single, caption={Requête pour avoir les informations du joueur}, label=infosJoueur}
+\begin{lstlisting}
+
+SELECT r.Activite, m.*, j.Date_Naissance, j.Adresse,
+
+       (SELECT COUNT(*) 
+        FROM Entraineur e1
+        WHERE e1.ID_Membre = $id_membre) AS entraine,
+
+       (SELECT COUNT(*)
+        FROM Joueur j1
+        WHERE j1.ID_Membre = $id_membre) AS joue,
+
+       (SELECT COUNT(*)
+        FROM Responsable r1
+        WHERE r1.ID_Membre = $id_membre) AS gere
+
+
+FROM (Membre m 
+      INNER JOIN Joueur j
+      ON j.ID_Membre = m.ID_Membre)
+     LEFT OUTER JOIN Responsable r
+     ON r.ID_Membre = $id_membre
+     
+WHERE m.ID_Membre = $id_membre
+
+\end{lstlisting}  
 
 \chapter*{Conclusion}
 
