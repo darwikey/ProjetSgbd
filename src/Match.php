@@ -37,18 +37,20 @@ class Match
 
   static function getMatch()
   {
-    $q = Database::query('Select Distinct r.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,
-                              sum(r.Points) as points, 
-                              sum(r.Fautes) as fautes 
+    $q = Database::query('SELECT DISTINCT rr.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,
+                                          SUM(rr.Points) AS points, 
+                                          SUM(rr.Fautes) AS fautes 
 		                      
-                              From Rencontre re, Rencontrer r, Equipe e, Club c
-		   
-                              Where e.ID_Equipe = r.ID_Equipe
-                              and re.ID_Rencontre = r.ID_Rencontre
-		                      and e.ID_Club = c.ID_Club
-                              
-                              Group by e.ID_Equipe, r.ID_Rencontre
-                              Order by re.Date_match, re.ID_Rencontre, points DESC');
+                          FROM ((Club c
+                                 INNER JOIN Equipe e
+                                 ON e.ID_Club = c.ID_Club) 
+                                INNER JOIN Rencontrer rr
+                                ON e.ID_Equipe = rr.ID_Equipe)
+                               INNER JOIN Rencontre re
+                               ON re.ID_Rencontre = rr.ID_Rencontre
+
+                          GROUP BY e.ID_Equipe, rr.ID_Rencontre
+                          ORDER BY re.Date_match, re.ID_Rencontre, points DESC');
 
     $data = $q->fetch();
     $date_match = $data['Date_match'];
