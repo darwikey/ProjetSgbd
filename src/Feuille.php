@@ -6,57 +6,63 @@ class Feuille
 {
   static function getFeuilleMatch($id_rencontre)
   {
-    $r = '';
+    $r = '<ul>';
 		
-    $q1 = Database::query('Select Distinct r.ID_Equipe, c.Nom, e.Categorie
-		From Rencontrer r, Equipe e, Club c
-		Where ID_Rencontre = ' .  $id_rencontre
-    . ' and e.ID_Equipe = r.ID_Equipe
-		and e.ID_Club = c.ID_Club');
+    $q1 = Database::query('
+		Select c.Nom as Nom_Club,
+		e0.Categorie,
+		m.Nom,
+		m.Prenom,
+		r0.Points,
+		r0.Fautes, 
+		r0.Points = (Select max(Points) 
+			From Rencontrer r
+			Where r.ID_Rencontre = r0.ID_Rencontre
+			and ID_Equipe = r0.ID_Equipe
+			) as MeilleurJoueur,
+		r0.Fautes = (Select max(Fautes) 
+			From Rencontrer r
+			Where r.ID_Rencontre = r0.ID_Rencontre
+			and ID_Equipe = r0.ID_Equipe
+			) as PireJoueur 
+								
+
+		From Rencontrer r0, Equipe e0, Club c, Membre m, Joueur j
+		Where ID_Rencontre = ' . $id_rencontre . '
+		and e0.ID_Equipe = r0.ID_Equipe
+		and e0.ID_Club = c.ID_Club
+		and r0.ID_Membre = m.ID_Membre
+		and m.ID_Membre = j.ID_Membre
+
+		Order by Nom_Club, Points DESC, Fautes ASC');
 		
-    while ($data1 = $q1->fetch())
-      {
-        $r = $r . '<h2>Club ' . $data1['Nom'] . ' (équipe ' . $data1['Categorie'] . ')</h2><ul>';
+	$nom_club = "";
 		
-        $q2 = Database::query('Select m.Nom, m.Prenom, r.Points, r.Fautes, 
-			r.Points = (Select max(Points) 
-						From Rencontrer
-						Where ID_Rencontre = ' .  $id_rencontre
-        . ' and ID_Equipe = ' . $data1['ID_Equipe'] 
-        . ') as MeilleurJoueur,
-			r.Fautes = (Select max(Fautes) 
-						From Rencontrer
-						Where ID_Rencontre = ' .  $id_rencontre
-        . ' and ID_Equipe = ' . $data1['ID_Equipe']
-        . ') as PireJoueur 
-			From Rencontrer r, Membre m, Joueur j
-			Where r.ID_Rencontre = ' .  $id_rencontre
-        . ' and r.ID_Equipe = ' . $data1['ID_Equipe']
-        . ' and r.ID_Membre = m.ID_Membre
-			and m.ID_Membre = j.ID_Membre
-			Order by r.Points DESC, r.Fautes');
-			
-			
-        while ($data2 = $q2->fetch())
-          {
-            $r2 = $data2['Nom'] . ' ' . $data2['Prenom']
-              . ' - Point : ' . $data2['Points'] 
-              . ' - Fautes : ' . $data2['Fautes'];
-			
-            if ($data2['PireJoueur'])
-              {
-                $r2 = '<font color="red"> ' . $r2 . '</font>';	
-              }
-            else if ($data2['MeilleurJoueur'])
-              {
-                $r2 = '<font color="green"> ' . $r2 . '</font>';	
-              }
-			
-            $r = $r . '<li>' . $r2 . '</li>';
-          }
+	// Pour chaque joueur de la rencontre
+	while ($data1 = $q1->fetch())
+	{
+		// On affiche le nom du club pour chaque club
+		if ($nom_club != $data1['Nom_Club'])
+		{
+			$nom_club = $data1['Nom_Club'];
+			$r = $r . '</ul><h2>Club ' . $nom_club . ' (équipe ' . $data1['Categorie'] . ')</h2><ul>';
+		}
 		
-        $r = $r . '</ul>';
-      }
+		$r2 = $data1['Nom'] . ' ' . $data1['Prenom']
+		. ' - Point : ' . $data1['Points'] 
+		. ' - Fautes : ' . $data1['Fautes'];
+		
+		if ($data1['PireJoueur'])
+		{
+			$r2 = '<font color="red"> ' . $r2 . '</font>';	
+		}
+		else if ($data1['MeilleurJoueur'])
+		{
+			$r2 = '<font color="green"> ' . $r2 . '</font>';	
+		}
+		
+		$r = $r . '<li>' . $r2 . '</li>';
+	}
 	
     return $r;
   }
