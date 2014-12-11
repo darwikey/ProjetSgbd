@@ -1,4 +1,4 @@
-\documentclass[a4paper»,8pt,french,fleqn]{report}
+1\documentclass[a4paper»,8pt,french,fleqn]{report}
 %Packages:
 
 %Langages:
@@ -81,19 +81,39 @@ On peut ensuite passer au schéma relationnel: \\
 
 \begin{itemize}
 
-\item Club(\underline{ID\_Club}, Nom, Ville) \\ 
-\item Membre(\underline{ID\_Membre}, \#ID\_Club, Nom, Prenom, Date\_Entree) \\
-\item Entraineur(\underline{\#ID\_Membre}) \\
-\item Joueur(\underline{Num\_Licence}, \#ID\_Membre, Date\_Naissance, Adresse) \\ 
-\item Responsable(\underline{\#ID\_Membre}) \\
-\item Rencontre (\underline{ID\_Rencontre}, Date\_Match) \\
-\item Equipe(\underline{ID\_Equipe}, Categorie, \#ID\_Club) \\
-\item Rencontrer(\underline{\#ID\_Membre}, \underline{ID\_Rencontre}, \#ID\_Equipe, Points, Fautes) \\
-\item Sentrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) \\
+\item Club(\underline{ID\_Club}, Nom, Ville)  
+\item Membre(\underline{ID\_Membre}, \#ID\_Club, Nom, Prenom, Date\_Entree) 
+\item Entraineur(\underline{\#ID\_Membre}) 
+\item Joueur(\underline{Num\_Licence}, \#ID\_Membre, Date\_Naissance, Adresse) 
+\item Responsable(\underline{\#ID\_Membre}) 
+\item Rencontre (\underline{ID\_Rencontre}, Date\_Match) 
+\item Equipe(\underline{ID\_Equipe}, Categorie, \#ID\_Club) 
+\item Rencontrer(\underline{\#ID\_Membre}, \underline{ID\_Rencontre}, \#ID\_Equipe, Points, Fautes) 
+\item Sentrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) 
 \item Entrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) 
 
 \end{itemize}
 
+Dépendances fonctionnelles: \\
+
+\begin{itemize}
+
+\item Num\_Licence \rightarrow Date\_Naissance
+\item Num\_Licence \rightarrow Adresse
+\item Num\_Licence \rightarrow ID\_Membre
+\item ID\_Membre, Date\_Entrainement \rightarrow ID\_Equipe
+\item ID\_Membre, ID\_Rencontre \rightarrow ID\_Equipe
+\item ID\_Membre, ID\_Rencontre \rightarrow Points
+\item ID\_Membre, ID\_Rencontre \rightarrow Fautes
+\item ID\_Rencontre \rightarrow Date\_Match
+\item ID\_Membre \rightarrow Nom
+\item ID\_Membre \rightarrow Prenom
+\item ID\_Membre \rightarrow Date\_Entree
+\item ID\_Membre \rightarrow ID\_Club
+\item ID\_Club \rightarrow Nom
+\item ID\_Club \rightarrow Ville
+
+\end{itemize}
 
 \chapter{Implémentation}
 
