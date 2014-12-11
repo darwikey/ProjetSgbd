@@ -168,8 +168,8 @@ From
 
 Where e.ID_Rencontre = t.ID_Rencontre
   and e.ID_Club = c.ID_Club
-  and e.Categorie = '$_POST['categorie']'
-Group by e.ID_Equipe
+  and e.Categorie = '\$\_POST['categorie']'
+Group by e.ID\_Equipe
 Order by gagne DESC, egual DESC, perdu DESC
 
 \end{lstlisting}
@@ -182,23 +182,23 @@ Dans l'onglet 'Joueurs', les joueurs de la fédération sont classés par clubs 
 
 \lstset{frame=single, caption={Requête classement des joueurs par club}, label=joueur}
 \begin{lstlisting}
-Select c.Nom as Nom_Club, j.ID_Membre, j.Num_Licence, 
-  m.Date_Entree, m.Nom, m.Prenom, j.Adresse, j.Date_Naissance,
+Select c.Nom as Nom\_Club, j.ID\_Membre, j.Num\_Licence, 
+  m.Date\_Entree, m.Nom, m.Prenom, j.Adresse, j.Date\_Naissance,
   avg(r.Points) as MoyennePoints,
   std(r.Points) as EcartTypePoints,
   avg(r.Fautes) as MoyenneFautes,
   std(r.Fautes) as EcartTypeFautes
 
 From Membre m, Joueur j, Rencontrer r, Rencontre a, Club c
-Where m.ID_Membre = j.ID_Membre
-  and r.ID_Membre = m.ID_Membre
-  and a.ID_Rencontre = r.ID_Rencontre
-  and Year(a.Date_match) = Year(Now())
-  and c.ID_Club = m.ID_Club
-Group by c.Nom, j.ID_Membre
+Where m.ID\_Membre = j.ID\_Membre
+  and r.ID\_Membre = m.ID\_Membre
+  and a.ID\_Rencontre = r.ID\_Rencontre
+  and Year(a.Date\_match) = Year(Now())
+  and c.ID\_Club = m.ID\_Club
+Group by c.Nom, j.ID\_Membre
 \end{lstlisting}
 
-La ligne '\textit{and Year(a.Date\_match) = Year(Now())}' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
+La ligne '\textit{and Year(a.Date\\_match) = Year(Now())}' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
 
 
 \section{Graphique}
@@ -206,26 +206,26 @@ Grace à l'utilisation de l'extension gd2 de PHP, il est possible de créer des 
 
 \lstset{frame=single, caption={Requête des statistiques pour un joueur}, label=graphique}
 \begin{lstlisting}
-Select Month(Date_Match) AS mois,
+Select Month(Date\_Match) AS mois,
   Sum(r.Points) as PointsMois,
   Sum(r.Fautes) as FautesMois,
   Sum(
     (Select sum(r1.Points)
     From Rencontrer r1
-    Where r1.ID_Rencontre = r.ID_Rencontre
-    and r1.ID_Equipe = r.ID_Equipe)
+    Where r1.ID\_Rencontre = r.ID\_Rencontre
+    and r1.ID\_Equipe = r.ID\_Equipe)
     >
     (Select sum(r1.Points)
     From Rencontrer r1
-    Where r1.ID_Rencontre = r.ID_Rencontre)/2) as Gagne,
+    Where r1.ID\_Rencontre = r.ID\_Rencontre)/2) as Gagne,
     
-count(r.ID_Rencontre) as NombreMatch
+count(r.ID\_Rencontre) as NombreMatch
 
 From Joueur j, Rencontrer r, Rencontre a
-Where j.ID_Membre = $idJoueur
-  and j.ID_Membre = r.ID_Membre
-  and r.ID_Rencontre = a.ID_Rencontre
-  and Year(Date_Match) = $annee
+Where j.ID\_Membre = \$idJoueur
+  and j.ID\_Membre = r.ID\_Membre
+  and r.ID\_Rencontre = a.ID\_Rencontre
+  and Year(Date\_Match) = \$annee
 Group by mois 
 Order by mois ASC
 \end{lstlisting}
@@ -243,18 +243,18 @@ Une requête permet de lister les matchs et pour chaque match est affiché le sc
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
-Select Distinct r.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,
+Select Distinct r.ID\_Equipe, c.Nom, e.Categorie, re.Date\_match, re.ID\_Rencontre,
   sum(r.Points) as points, 
   sum(r.Fautes) as fautes 
 
 From Rencontre re, Rencontrer r, Equipe e, Club c
 
-Where e.ID_Equipe = r.ID_Equipe
-  and re.ID_Rencontre = r.ID_Rencontre
-  and e.ID_Club = c.ID_Club
+Where e.ID\_Equipe = r.ID\_Equipe
+  and re.ID\_Rencontre = r.ID\_Rencontre
+  and e.ID\_Club = c.ID\_Club
 
-Group by e.ID_Equipe, r.ID_Rencontre
-Order by re.Date_match, re.ID_Rencontre, points DESC');
+Group by e.ID\_Equipe, r.ID\_Rencontre
+Order by re.Date\_match, re.ID\_Rencontre, points DESC');
 \end{lstlisting}
 
 Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre en ajoutant une condition à la clause ``Where''.
@@ -264,7 +264,7 @@ Une autre variante de cette requête permet de sélectionner les matchs par date
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
-Select c.Nom as Nom_Club,
+Select c.Nom as Nom\_Club,
 e0.Categorie,
 m.Nom,
 m.Prenom,
@@ -272,24 +272,24 @@ r0.Points,
 r0.Fautes, 
 r0.Points = (Select max(Points) 
   From Rencontrer r
-  Where r.ID_Rencontre = r0.ID_Rencontre
-  and ID_Equipe = r0.ID_Equipe
+  Where r.ID\_Rencontre = r0.ID\_Rencontre
+  and ID\_Equipe = r0.ID\_Equipe
   ) as MeilleurJoueur,
 r0.Fautes = (Select max(Fautes) 
   From Rencontrer r
-  Where r.ID_Rencontre = r0.ID_Rencontre
-  and ID_Equipe = r0.ID_Equipe
+  Where r.ID\_Rencontre = r0.ID\_Rencontre
+  and ID\_Equipe = r0.ID\_Equipe
   ) as PireJoueur 
             
 
 From Rencontrer r0, Equipe e0, Club c, Membre m, Joueur j
-Where ID_Rencontre = ' . $id_rencontre . '
-and e0.ID_Equipe = r0.ID_Equipe
-and e0.ID_Club = c.ID_Club
-and r0.ID_Membre = m.ID_Membre
-and m.ID_Membre = j.ID_Membre
+Where ID\_Rencontre = ' . \$id\_rencontre . '
+and e0.ID\_Equipe = r0.ID\_Equipe
+and e0.ID\_Club = c.ID\_Club
+and r0.ID\_Membre = m.ID\_Membre
+and m.ID\_Membre = j.ID\_Membre
 
-Order by Nom_Club, Points DESC, Fautes ASC
+Order by Nom\_Club, Points DESC, Fautes ASC
 \end{lstlisting}
 
 \chapter*{Conclusion}
