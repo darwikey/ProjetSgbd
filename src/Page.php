@@ -7,6 +7,7 @@ include_once('Match.php');
 include_once('Statistique.php');
 include_once('Ajouter.php');
 include_once('Feuille.php');
+include_once('Modifier.php');
 
 function main()
 {
@@ -62,6 +63,18 @@ function main()
       else if ($_GET['page'] == 'feuille')
         {
           echo Feuille::getFeuilleMatch($_GET['rencontre']);
+        }
+      else if ($_GET['page'] == 'modifier')
+        {
+          echo Modifier::getPage();
+        }
+      else if ($_GET['page'] == 'modifierMembre')
+        {
+          echo Modifier::modifyMembre();
+        }
+      else if ($_GET['page'] == 'modifierMembreInformation')
+        {
+          echo Modifier::modifyMembreInformation();
         }
       else
 		{
