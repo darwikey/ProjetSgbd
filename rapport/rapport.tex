@@ -114,51 +114,51 @@ Cette partie liste les différents clubs de la fédération avec pour renseignem
 \lstset{frame=single, caption={Requete information sur les clubs}, label=club}
 \begin{lstlisting}
 
-Select c.Nom, c.Ville, c.ID_Club,
- (Select count(*) 
-  From Equipe e
-  Where c.ID_club = e.ID_Club) as NombreEquipe,
+SELECT c.Nom, c.Ville, c.ID_Club,
+       (SELECT count(*) 
+        FROM Equipe e
+        WHERE c.ID_club = e.ID_Club) AS NombreEquipe,
 
- (Select count(*) 
-  From Joueur j, Membre m
-  Where c.ID_Club = m.ID_Club
-  and m.ID_Membre = j.ID_Membre) as NombreJoueur
+       (SELECT count(*) 
+        FROM Joueur j, Membre m
+        WHERE c.ID_Club = m.ID_Club
+        AND m.ID_Membre = j.ID_Membre) AS NombreJoueur
 
-From Club c;
+FROM Club c;
+
 \end{lstlisting}
 
 \section{Equipes}
 
-Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML. La fonction d'agrégation ``sum'' est utilisé afin d'obtenir le nombre de matchs gagnés, ex-aequos et perdus. 
+Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML. La fonction d'agrégation ``sum'' est utilisé afin d'obtenir le nombre de matchs gagnés, ex-aequos et perdus. Une première sous-requête permet d'obtenir le nombre de points marqués par équipe par rencontre. La seconde permet d'avoir le total de points par rencontre. 
 
-\lstset{frame=single, caption={Requête classement des équipes de la fédération par catégorie}, label=club}
+\lstset{frame=single, caption={Requête classement des équipes de la fédération par catégorie}, label=equipe}
 \begin{lstlisting}
 
-Select c.Nom,
-  sum(e.Points > t.Points/2) as gagne,
-  sum(e.Points = t.Points/2) as egual,
-  sum(e.Points < t.Points/2) as perdu
-  
-From
-  
-  (Select ID_Rencontre, e1.*,
-    sum(r1.Points) as Points
-  From Equipe e1, Rencontrer r1
-  Where e1.ID_Equipe = r1.ID_Equipe
-  Group by r1.ID_Rencontre, e1.ID_Equipe) e,
+SELECT c.Nom,
+       SUM(e.Points > t.Total/2) AS gagne,
+       SUM(e.Points = t.Total/2) AS egual,
+       SUM(e.Points < t.Total/2) AS perdu
+			
+FROM ((SELECT ID_Rencontre, e1.*,
+       SUM(r1.Points) AS Points
+       FROM Equipe e1, Rencontrer r1
+       WHERE e1.ID_Equipe = r1.ID_Equipe
+       GROUP BY r1.ID_Rencontre, e1.ID_Equipe) e 
+                
+       INNER JOIN (SELECT ID_Rencontre,
+                   SUM(r1.Points) AS Total
+                   FROM Rencontrer r1
+                   GROUP BY r1.ID_Rencontre) t
+                   ON e.ID_Rencontre = t.ID_Rencontre)
+ 
+     INNER JOIN Club c
+     ON e.ID_Club = c.ID_Club
+			  
+WHERE e.Categorie = \'' . $_POST['categorie'] . '\'
 
-  (Select ID_Rencontre,
-    sum(r1.Points) as Points
-  From Rencontrer r1
-  Group by r1.ID_Rencontre) t,
-  
-  Club c
-
-Where e.ID_Rencontre = t.ID_Rencontre
-  and e.ID_Club = c.ID_Club
-  and e.Categorie = '$_POST['categorie']'
-Group by e.ID_Equipe
-Order by gagne DESC, egual DESC, perdu DESC
+GROUP BY e.ID_Equipe
+ORDER BY gagne DESC, egual DESC, perdu DESC
 
 \end{lstlisting}
 
@@ -166,56 +166,65 @@ Le classement peut-être restreint aux clubs sans distinction des catégories. L
 
 
 \section{Joueurs}
-Dans l'onglet 'Joueurs', les joueurs de la fédération sont classés par clubs avec des informations comme le nom, prénom, numéro de licence... La moyenne des points marqués et des fautes faites, ainsi que leur écart type sont calculés via les fonctions d'agrégation SQL ``avg'' et ``std''. La requête \ref{joueur} permet de collecter ces informations dans les tables de la base de données.
+Dans l'onglet 'Joueurs', les joueurs de la fédération sont classés par clubs avec des informations comme le nom, prénom, numéro de licence... La moyenne des points marqués et des fautes faites, ainsi que leur écart type sont calculés via les fonctions d'agrégation SQL ``AVG'' et ``STD''. La requête \ref{joueur} permet de collecter ces informations dans les tables de la base de données.
 
 \lstset{frame=single, caption={Requête classement des joueurs par club}, label=joueur}
 \begin{lstlisting}
-Select c.Nom as Nom_Club, j.ID_Membre, j.Num_Licence, 
-  m.Date_Entree, m.Nom, m.Prenom, j.Adresse, j.Date_Naissance,
-  avg(r.Points) as MoyennePoints,
-  std(r.Points) as EcartTypePoints,
-  avg(r.Fautes) as MoyenneFautes,
-  std(r.Fautes) as EcartTypeFautes
 
-From Membre m, Joueur j, Rencontrer r, Rencontre a, Club c
-Where m.ID_Membre = j.ID_Membre
-  and r.ID_Membre = m.ID_Membre
-  and a.ID_Rencontre = r.ID_Rencontre
-  and Year(a.Date_match) = Year(Now())
-  and c.ID_Club = m.ID_Club
-Group by c.Nom, j.ID_Membre
+SELECT c.Nom AS Nom_Club, 
+       m.Date_Entree, m.Nom, m.Prenom, 
+       j.Adresse, j.Date_Naissance, j.ID_Membre, j.Num_Licence,
+       AVG(rr.Points) AS MoyennePoints,
+       STD(rr.Points) AS EcartTypePoints,
+       AVG(rr.Fautes) AS MoyenneFautes,
+       STD(rr.Fautes) AS EcartTypeFautes
+
+FROM (((Membre m 
+        INNER JOIN Joueur j
+        ON m.ID_Membre = j.ID_Membre) 
+       INNER JOIN Rencontrer rr
+       ON rr.ID_Membre = m.ID_Membre)
+      INNER JOIN Club c
+      ON c.ID_Club = m.ID_Club)
+     INNER JOIN Rencontre re
+     ON re.ID_Rencontre = rr.ID_Rencontre
+
+WHERE YEAR(re.Date_match) = YEAR(NOW())
+GROUP BY c.Nom, j.ID_Membre
+
 \end{lstlisting}
 
-La ligne '\textit{and Year(a.Date\_match) = Year(Now())}' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
+La ligne ``\textit{and YEAR(re.Date\_match) = YEAR(NOW())}'' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
 
 
 \section{Graphique}
-Grace à l'utilisation de l'extension gd2 de PHP, il est possible de créer des graphiques. Pour chaque mois d'une année et un joueur sont tracés, les points gagnés, les fautes faites et le nombre de matchs gagnés et perdus. La figure \ref{fig:graph} est un exemple de graphique obtenu après application de la requête \ref{graphique}.
+Grace à l'utilisation de l'extension gd2 de PHP, il est possible de créer des graphiques. Pour chaque mois d'une année et un joueur, sont tracésles points gagnés, les fautes faites et le nombre de matchs gagnés et perdus. La figure \ref{fig:graph} est un exemple de graphique obtenu après application de la requête \ref{graphique}.
 
 \lstset{frame=single, caption={Requête des statistiques pour un joueur}, label=graphique}
 \begin{lstlisting}
-Select Month(Date_Match) AS mois,
-  Sum(r.Points) as PointsMois,
-  Sum(r.Fautes) as FautesMois,
-  Sum(
-    (Select sum(r1.Points)
-    From Rencontrer r1
-    Where r1.ID_Rencontre = r.ID_Rencontre
-    and r1.ID_Equipe = r.ID_Equipe)
-    >
-    (Select sum(r1.Points)
-    From Rencontrer r1
-    Where r1.ID_Rencontre = r.ID_Rencontre)/2) as Gagne,
+SELECT Month(Date_Match) AS mois,
+       SUM(rr.Points) AS PointsMois,
+       SUM(rr.Fautes) AS FautesMois,
+       SUM((SELECT SUM(r1.Points)
+            FROM Rencontrer r1
+            WHERE r1.ID_Rencontre = rr.ID_Rencontre
+            AND r1.ID_Equipe = rr.ID_Equipe)
+            >
+           (SELECT SUM(r1.Points)
+            FROM Rencontrer r1
+            WHERE r1.ID_Rencontre = rr.ID_Rencontre)/2) AS Gagne,
     
-count(r.ID_Rencontre) as NombreMatch
+       COUNT(rr.ID_Rencontre) AS NombreMatch
 
-From Joueur j, Rencontrer r, Rencontre a
-Where j.ID_Membre = $idJoueur
-  and j.ID_Membre = r.ID_Membre
-  and r.ID_Rencontre = a.ID_Rencontre
-  and Year(Date_Match) = $annee
-Group by mois 
-Order by mois ASC
+FROM Joueur j, Rencontrer rr, Rencontre re
+
+WHERE j.ID_Membre = $idJoueur
+AND   j.ID_Membre = rr.ID_Membre
+AND   rr.ID_Rencontre = re.ID_Rencontre
+AND   YEAR(Date_Match) = $annee
+
+GROUP BY mois 
+ORDER BY mois ASC
 \end{lstlisting}
 
 \begin{figure}[h]
@@ -231,21 +240,25 @@ Une requête permet de lister les matchs et pour chaque match est affiché le sc
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
-Select Distinct r.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,
-  sum(r.Points) as points, 
-  sum(r.Fautes) as fautes 
 
-From Rencontre re, Rencontrer r, Equipe e, Club c
+SELECT DISTINCT rr.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,
+                SUM(rr.Points) AS points, 
+                SUM(rr.Fautes) AS fautes 
+		                      
+FROM ((Club c
+       INNER JOIN Equipe e
+       ON e.ID_Club = c.ID_Club) 
+      INNER JOIN Rencontrer rr
+      ON e.ID_Equipe = rr.ID_Equipe)
+     INNER JOIN Rencontre re
+     ON re.ID_Rencontre = rr.ID_Rencontre
 
-Where e.ID_Equipe = r.ID_Equipe
-  and re.ID_Rencontre = r.ID_Rencontre
-  and e.ID_Club = c.ID_Club
+GROUP BY e.ID_Equipe, rr.ID_Rencontre
+ORDER BY re.Date_match, re.ID_Rencontre, points DESC
 
-Group by e.ID_Equipe, r.ID_Rencontre
-Order by re.Date_match, re.ID_Rencontre, points DESC');
 \end{lstlisting}
 
-Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre en ajoutant une condition à la clause ``Where''.
+Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre en ajoutant une condition à la clause ``WHERE''.
 
 
 \section{Feuilles de matchs}
@@ -254,19 +267,19 @@ Pour chaque match, une feuille de match est créée avec les deux équipes. Les 
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
-Select c.Nom as Nom_Club, e.Categorie, m.Nom, m.Prenom, r0.Points, r0.Fautes, 
+SELECT c.Nom as Nom_Club, e.Categorie, m.Nom, m.Prenom, r0.Points, r0.Fautes, 
 
-r0.Points = (Select max(Points) 
-             From Rencontrer r
-             Where r.ID_Rencontre = r0.ID_Rencontre
+r0.Points = (SELECT max(Points) 
+             FROM Rencontrer r
+             WHERE r.ID_Rencontre = r0.ID_Rencontre
              and r.ID_Equipe = r0.ID_Equipe) as MeilleurJoueur,
 
-r0.Fautes = (Select max(Fautes) 
-             From Rencontrer r
-	     Where r.ID_Rencontre = r0.ID_Rencontre
+r0.Fautes = (SELECT max(Fautes) 
+             FROM Rencontrer r
+	     WHERE r.ID_Rencontre = r0.ID_Rencontre
 	     and r.ID_Equipe = r0.ID_Equipe) as PireJoueur 
 								
-From ((((Rencontrer r0 inner join Equipe e
+FROM ((((Rencontrer r0 inner join Equipe e
          On e.ID_Equipe = r0.ID_Equipe) 
         inner join Club c            
         On e.ID_Club = c.ID_Club) 
@@ -275,7 +288,7 @@ From ((((Rencontrer r0 inner join Equipe e
       inner join Joueur j
       On m.ID_Membre = j.ID_Membre)
 
-Where r0.ID_Rencontre = $id_rencontre
+WHERE r0.ID_Rencontre = $id_rencontre
 Order by Nom_Club, Points DESC, Fautes ASC
 \end{lstlisting}
 
