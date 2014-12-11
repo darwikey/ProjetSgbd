@@ -237,10 +237,12 @@ Une autre variante de cette requête permet de sélectionner les matchs par date
 
 \section{Feuilles de matchs}
 
+Pour chaque match, une feuille de match est créée avec les deux équipes. Les joueurs sont classés par nombre de points marqués.
+
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
 Select c.Nom as Nom_Club,
-e0.Categorie,
+e.Categorie,
 m.Nom,
 m.Prenom,
 r0.Points,
@@ -257,15 +259,17 @@ r0.Fautes = (Select max(Fautes)
   ) as PireJoueur 
             
 
-From Rencontrer r0, Equipe e0, Club c, Membre m, Joueur j
-Where ID_Rencontre = ' . $id_rencontre . '
-and e0.ID_Equipe = r0.ID_Equipe
-and e0.ID_Club = c.ID_Club
-and r0.ID_Membre = m.ID_Membre
-and m.ID_Membre = j.ID_Membre
+From Rencontrer r0, Equipe e, Club c, Membre m, Joueur j
+Where ID_Rencontre = $id_rencontre
+  and e.ID_Equipe = r0.ID_Equipe
+  and e.ID_Club = c.ID_Club
+  and r0.ID_Membre = m.ID_Membre
+  and m.ID_Membre = j.ID_Membre
 
 Order by Nom_Club, Points DESC, Fautes ASC
 \end{lstlisting}
+
+Lors de l'affichage de cette requête, le meilleur joueur est affiché en vert. De même le joueur qui a fait le plus de fautes est affiché en rouge. Ces informations sont contenues dans les colonnes \textit{MeilleurJoueur} et \textit{PireJoueur} par une valeur à 1 ou à 0.
 
 \chapter*{Conclusion}
 
