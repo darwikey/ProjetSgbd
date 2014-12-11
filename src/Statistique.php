@@ -63,7 +63,7 @@ class Statistique
 			$r = $r . '<h1>Catégorie ' . $data1['Categorie'] . '</h1>';
 			
 			$q2 = Database::query('Select m.Nom, m.Prenom,
-				avg(r.Points) as MoyennePoints
+				sum(r.Points) as MoyennePoints
 				
 				From Membre m, Joueur j, Rencontrer r, Rencontre a, Equipe e
 				Where m.ID_Membre = j.ID_Membre
@@ -77,7 +77,7 @@ class Statistique
 			
 			while ($data2 = $q2->fetch())
 			{
-				$r = $r . '<li>' . $data2['Nom'] . ' ' . $data2['Prenom'] . ' - Points en moyenne : ' . (int)$data2['MoyennePoints'] . '</li>';
+				$r = $r . '<li>' . $data2['Nom'] . ' ' . $data2['Prenom'] . ' - Points marqués : ' . (int)$data2['MoyennePoints'] . '</li>';
 			}
 		}
 		
