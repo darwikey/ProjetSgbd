@@ -207,7 +207,7 @@ La ligne ``\textit{and YEAR(re.Date\_match) = YEAR(NOW())}'' permet de selection
 
 
 \section{Graphique}
-Grace à l'utilisation de l'extension gd2 de PHP, il est possible de créer des graphiques. Pour chaque mois d'une année et un joueur, sont tracésles points gagnés, les fautes faites et le nombre de matchs gagnés et perdus. La figure \ref{fig:graph} est un exemple de graphique obtenu après application de la requête \ref{graphique}.
+Grace à l'utilisation de l'extension gd2 de PHP, il est possible de créer des graphiques. Pour chaque mois d'une année et un joueur, sont tracés les points gagnés, les fautes faites et le nombre de matchs gagnés et perdus. La figure \ref{fig:graph} est un exemple de graphique obtenu après application de la requête \ref{graphique}.
 
 \lstset{frame=single, caption={Requête des statistiques pour un joueur}, label=graphique}
 \begin{lstlisting}
@@ -308,11 +308,11 @@ Lors de l'affichage de cette requête, le meilleur joueur d'une équipe est affi
 Afin de faire évoluer la base de données, des scripts d'ajouts via formulaire PHP ont été implémentés. Il est possible d'ajouter des Membres, des Equipes, des Clubs et des Matchs.
 
 \subsection{Membre}
-Pour ajouter un membre, il est nécessaire d'entrer toutes les informations tel que nom, prénom, date de naissance, date d'entrée dans le club, club, activté et poste si responsable. L'adresse n'est pas obligatoire puisque le champs n'est pas à ``NOT NULL'' dans la table Joueur. La validité des dates est vérifiée via une fonction PHP qui teste une chaîne avec une expression régulière. \\
+Pour ajouter un membre, il est nécessaire d'entrer toutes les informations telles que nom, prénom, date de naissance, date d'entrée dans le club, club, activté et poste si responsable. L'adresse n'est pas obligatoire puisque le champs n'est pas à ``NOT NULL'' dans la table Joueur. La validité des dates est vérifiée via une fonction PHP qui teste une chaîne avec une expression régulière. \\
 
 Le club se sélectionne via un menu déroulant pour éviter à l'utilisateur de faire une faute de frappe. Pour ce faire la requête simple ``SELECT Nom FROM Club'' est appliqué à la base de donnée afin de connaître le nom de l'ensemble des clubs. \\
 
- Pour un membre la sélection d'au moins une activité est obligatoire parmis : Entraineur, Joueur et Responsable, afin de respecter le modèle de l'introduction. Une fois le formulaire rempli et validé, les données sont vérifiés puis insérés dans la base via une requête SQL de type ``INSERT INTO Nom\_Table(...) VALUES (...)''. Dans le cas d'un responsable, afin de vérifier que le poste n'est pas déjà occupé la requête \ref{posteOccupe} est appliquée.
+ Pour un membre la sélection d'au moins une activité est obligatoire parmi : Entraineur, Joueur et Responsable, afin de respecter le modèle de l'introduction. Une fois le formulaire rempli et validé, les données sont vérifiées puis insérées dans la base via une requête SQL de type ``INSERT INTO Nom\_Table(...) VALUES (...)''. Dans le cas d'un responsable, afin de vérifier que le poste n'est pas déjà occupé la requête \ref{posteOccupe} est appliquée.
 
 \lstset{frame=single, caption={Requête pour savoir si un poste est occupé}, label=posteOccupe}
 \begin{lstlisting}
@@ -330,7 +330,7 @@ AND    Activite  = $_POST['role']
 Si jamais le poste est déjà occupé, le nouveau membre est automatiquement supprimé de toutes les tables dans lesquelles il a été créé via une requête SQL de type ``DELETE FROM Table WHERE ID\_Membre = ID\_Nouveau\_Membre''. Ce script ne vérifie pas que la date de naissance du joueur est bien inférieure à sa date d'entrée au club.
 
 \subsection{Club}
-Pour ajouter un club, il faut entrer son nom, sa ville et choisir son Président parmis la liste des joueurs et entraîneurs d'autres clubs n'étant pas responsables (Président, Trésorier...). L'établissement de cette liste ce fait via la requête \ref{irresponsable}.
+Pour ajouter un club, il faut entrer son nom, sa ville et choisir son Président parmi la liste des joueurs et entraîneurs d'autres clubs n'étant pas responsables (Président, Trésorier...). L'établissement de cette liste se fait via la requête \ref{irresponsable}.
 
 \lstset{frame=single, caption={Requête pour connaître la liste des personnes n'étant pas Responsables}, label=irresponsable}
 \begin{lstlisting}
@@ -379,13 +379,13 @@ ORDER BY c.Nom
 
 \end{lstlisting}  
 
-Les informations sont ajoutées aux tables Rencontrer et Rencontre avec des fautes et des points attribués de manière aléatoire à chaque joueurs. Le nombre de joueurs participants aux matchs n'est pas vérifié, il est toutefois impossible de ne pas choisir de joueurs pour une équipe. Le nombre minimum de joueurs pouvant jouer est donc un, il n'y a pas de maximum.
+Les informations sont ajoutées aux tables Rencontrer et Rencontre avec des fautes et des points attribués de manière aléatoire à chaque joueurs. Le nombre de joueurs participant aux matchs n'est pas vérifié, il est toutefois impossible de ne pas choisir de joueurs pour une équipe. Le nombre minimum de joueurs pouvant jouer est donc un, il n'y a pas de maximum.
 
 \section{Modifier}
 
-La modification de club et d'équipes n'ayant pas beaucoup d'intérêt nous avons décidé de n'implémenter que la modification des membres sans pouvoir toutefois modifier leur rôle en tant que responsable au sein d'un club. Cette décision a été prise pour nous simplifier la tâche par manque de temps. De même la modification de matchs n'est pas prise en compte du fait de la lourdeur de l'implémentation (changement des résultats, validité des résultats, disponibilités des joueurs, ajout ou retraits de joueurs etc). \\
+La modification de club et d'équipes n'ayant pas beaucoup d'intérêt nous avons décidé de n'implémenter que la modification des membres sans pouvoir toutefois modifier leur rôle en tant que responsable au sein d'un club. Cette décision a été prise pour nous simplifier la tâche par manque de temps. De même la modification de matchs n'est pas prise en compte du fait de la lourdeur de l'implémentation (changement des résultats, validité des résultats, disponibilités des joueurs, ajouts ou retraits de joueurs etc). \\
 
-Dans un premier temps il faut sélectionner le club dont les différents noms sont obtenus via la requête simple ``SELECT Nom, ID\_Club FROM Club'' déjà vu auparavant. Une fois le club sélectionné une autre requête permet d'en obtenir les membres. Enfin, après la sélection du joueur, ses informations s'affiche dans un formulaire pré-rempli grâce à la requête \ref{infosJoueur}.
+Dans un premier temps il faut sélectionner le club dont les différents noms sont obtenus via la requête simple ``SELECT Nom, ID\_Club FROM Club'' déjà vu auparavant. Une fois le club sélectionné une autre requête permet d'en obtenir les membres. Enfin, après la sélection du joueur, ses informations s'affichent dans un formulaire pré-rempli grâce à la requête \ref{infosJoueur}.
 
 \lstset{frame=single, caption={Requête pour avoir les informations du joueur}, label=infosJoueur}
 \begin{lstlisting}
