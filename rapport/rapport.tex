@@ -69,7 +69,7 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 
 \item Les joueurs n'appartiennent pas à une équipe mais à un club. Cela offre la possibilité de changer d'équipe un joueur à chaque rencontre. \\
 
-\item Joueur, Responsable et Entraineur héritent de Membre. Par la contrainte de totalité un Membre doit être soit Joueur ou Responsable ou Entraineur, soit les trois à la fois, soit deux parmis les trois. \\
+\item Joueur, Responsable et Entraineur héritent de Membre. Par la contrainte de totalité un Membre doit être soit Joueur soit Responsable soit Entraineur, soit deux parmis les trois, soit les trois à la fois.\\
 
 \item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe.
 
@@ -94,30 +94,7 @@ On peut ensuite passer au schéma relationnel: \\
 
 \end{itemize}
 
-On obtient ainsi les dépendances fonctionnelles suivantes: \\
-
-\begin{itemize}
-
-\item Num\_Licence $\rightarrow$ Date\_Naissance
-\item Num\_Licence $\rightarrow$ Adresse
-\item Num\_Licence $\rightarrow$ ID\_Membre
-\item ID\_Membre, Date\_Entrainement $\rightarrow$ ID\_Equipe
-\item ID\_Membre, ID\_Rencontre $\rightarrow$ ID\_Equipe
-\item ID\_Equipe $\rightarrow$ Categorie
-\item ID\_Equipe $\rightarrow$ ID\_Club
-\item ID\_Membre, ID\_Rencontre $\rightarrow$ Points
-\item ID\_Membre, ID\_Rencontre $\rightarrow$ Fautes
-\item ID\_Rencontre $\rightarrow$ Date\_Match
-\item ID\_Membre $\rightarrow$ Nom
-\item ID\_Membre $\rightarrow$ Prenom
-\item ID\_Membre $\rightarrow$ Date\_Entree
-\item ID\_Membre $\rightarrow$ ID\_Club
-\item ID\_Club $\rightarrow$ Nom
-\item ID\_Club $\rightarrow$ Ville
-
-\end{itemize}
-
-Ces dépendances fonctionnelles nous donnent le graphe \ref{fig:depfct}:
+On obtient alors le graphe \ref{fig:depfct} des dépendances fonctionelles.
 
 \begin{figure}[h]
   \centering
@@ -282,12 +259,12 @@ Select c.Nom as Nom_Club, e.Categorie, m.Nom, m.Prenom, r0.Points, r0.Fautes,
 r0.Points = (Select max(Points) 
              From Rencontrer r
              Where r.ID_Rencontre = r0.ID_Rencontre
-             and ID_Equipe = r0.ID_Equipe) as MeilleurJoueur,
+             and r.ID_Equipe = r0.ID_Equipe) as MeilleurJoueur,
 
 r0.Fautes = (Select max(Fautes) 
              From Rencontrer r
 	     Where r.ID_Rencontre = r0.ID_Rencontre
-	     and ID_Equipe = r0.ID_Equipe) as PireJoueur 
+	     and r.ID_Equipe = r0.ID_Equipe) as PireJoueur 
 								
 From ((((Rencontrer r0 inner join Equipe e
          On e.ID_Equipe = r0.ID_Equipe) 
@@ -302,7 +279,7 @@ Where r0.ID_Rencontre = $id_rencontre
 Order by Nom_Club, Points DESC, Fautes ASC
 \end{lstlisting}
 
-Lors de l'affichage de cette requête, le meilleur joueur est affiché en vert. De même le joueur qui a fait le plus de fautes est affiché en rouge. Ces informations sont contenues dans les colonnes \textit{MeilleurJoueur} et \textit{PireJoueur} par une valeur à 1 ou à 0.
+Lors de l'affichage de cette requête, le meilleur joueur d'une équipe est affiché en vert et celui qui a fait le plus de fautes est affiché en rouge. Ces informations booléennes sont contenues dans les colonnes \textit{MeilleurJoueur}, \textit{PireJoueur}. Elles sont obtenues via un test d'égalité entre le nombre de points (respectivement fautes) d'un joueur et le maximum de points marqués (respectivement fautes faites) déterminé à l'aide de deux sous-requêtes.
 
 \chapter*{Conclusion}
 
