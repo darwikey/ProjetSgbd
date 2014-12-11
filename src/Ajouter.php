@@ -163,7 +163,11 @@ class Ajouter
                         
             if(in_array("Responsable", $_POST['activite']))
               {
-                $q = Database::query('Select Activite From Responsable r, Membre m Where r.ID_Membre = m.ID_Membre and m.ID_Club = ' . $id_club . ' and Activite = \'' . $_POST['role'] . '\'');
+                $q = Database::query('SELECT Activite
+                                      FROM   Responsable r INNER JOIN Membre m
+                                             ON r.ID_Membre = m.ID_Membre
+                                      WHERE  m.ID_Club = ' . $id_club . '
+                                      AND    Activite = \'' . $_POST['role'] . '\'');
 
                 $data = $q->fetch();
 
@@ -212,9 +216,11 @@ class Ajouter
 
   static function addClub()
   {
-    $q = Database::query('Select m.ID_Membre, m.Nom, m.Prenom 
-                          From Membre m
-                          Where not exists (Select * from Responsable r where m.ID_Membre = r.ID_Membre)');
+    $q = Database::query('SELECT m.ID_Membre, m.Nom, m.Prenom 
+                          FROM Membre m
+                          WHERE NOT EXISTS (SELECT r.ID_Membre 
+                                            FROM Responsable r 
+                                            WHERE m.ID_Membre = r.ID_Membre)');
 
     $r = '<form action="index.php?page=ajouterClub" method="post">
                <p> Entrez le nom : 
@@ -364,19 +370,27 @@ class Ajouter
 
         if(($locaux[0] != $visiteurs[0]) and ($locaux[1] == $visiteurs[1]))
           {
-            $q = Database::query('Select distinct m.ID_Membre, m.Nom, m.Prenom, j.Num_Licence, c.Nom as NomClub 
-                                  From Membre m, Joueur j, Club c
+            $q = Database::query('SELECT DISTINCT m.ID_Membre, m.Nom, m.Prenom, j.Num_Licence, c.Nom AS NomClub 
 
-                                  Where c.Nom in (\''.$locaux[0].'\',\''.$visiteurs[0].'\')
-                                  and c.ID_Club = m.ID_Club
-                                  and m.ID_Membre = j.ID_Membre
-                                  and m.ID_Membre not in (Select m.ID_Membre
-                                                          From Rencontre re, Rencontrer rr, Membre m
-                                                          where re.Date_match = \''.$date.'\'
-                                                          and re.ID_Rencontre = rr.ID_rencontre
-                                                          and rr.ID_Membre = m.ID_Membre)
+                                  FROM (Joueur j 
+                                        INNER JOIN Membre m
+                                        ON m.ID_Membre = j.ID_Membre)
+                                       INNER JOIN Club c
+                                       ON m.ID_Club = c.ID_Club
 
-                                  Order by c.Nom');
+                                  WHERE c.Nom IN (\''.$locaux[0].'\',\''.$visiteurs[0].'\')
+
+                                  AND m.ID_Membre NOT IN (SELECT m.ID_Membre
+
+                                                          FROM (Rencontre re
+                                                                INNER JOIN  Rencontrer rr
+                                                                ON re.ID_Rencontre = rr.ID_Rencontre)
+                                                               INNER JOIN Membre m
+                                                               ON rr.ID_Membre = m.ID_Membre
+
+                                                           WHERE re.Date_match = \''.$date.'\')
+
+                                  ORDER BY c.Nom');
 
             if($data = $q->fetch())
               {

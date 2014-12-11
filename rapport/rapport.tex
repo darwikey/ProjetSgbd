@@ -111,7 +111,7 @@ L'interface entre l'utilisateur et la base de données a été faite en PHP. Les
 
 \section{Clubs}
 
-Cette partie liste les différents clubs de la fédération avec pour renseignement : la ville, les responsables, le nombre d'équipes et le nombre de joueurs. Deux sous-requêtes utilisant la fonction d'agrégation ``count'' sont implémentées dans \ref{club} afin d'obtenir le nombre d'équipes et de joueurs du club. 
+Cette partie liste les différents clubs de la fédération avec pour renseignement : la ville, les responsables, le nombre d'équipes et le nombre de joueurs. Deux sous-requêtes utilisant la fonction d'agrégation ``COUNT'' sont implémentées dans \ref{club} afin d'obtenir le nombre d'équipes et de joueurs du club. 
 
 \lstset{frame=single, caption={Requete information sur les clubs}, label=club}
 \begin{lstlisting}
@@ -132,7 +132,7 @@ FROM Club c;
 
 \section{Equipes}
 
-Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML. La fonction d'agrégation ``sum'' est utilisé afin d'obtenir le nombre de matchs gagnés, ex-aequos et perdus. Une première sous-requête permet d'obtenir le nombre de points marqués par équipe par rencontre. La seconde permet d'avoir le total de points par rencontre. 
+Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes de la fédération par catégorie. La catégorie est séléctionnée via un formulaire PHP et les résultats sont affichés dans un tableau HTML. La fonction d'agrégation ``SUM'' est utilisé afin d'obtenir le nombre de matchs gagnés, ex-aequos et perdus. Une première sous-requête permet d'obtenir le nombre de points marqués par équipe par rencontre. La seconde permet d'avoir le total de points par rencontre. 
 
 \lstset{frame=single, caption={Requête classement des équipes de la fédération par catégorie}, label=equipe}
 \begin{lstlisting}
@@ -265,7 +265,7 @@ Une autre variante de cette requête permet de sélectionner les matchs par date
 
 \section{Feuilles de matchs}
 
-Pour chaque match, une feuille de match est créée avec les deux équipes. Les joueurs sont classés par nombre de points marqués.
+Pour chaque match, une feuille de match est créée avec les deux équipes. Les joueurs sont classés par équipe et par nombre de points marqués.
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
@@ -294,7 +294,85 @@ WHERE r0.ID_Rencontre = $id_rencontre
 Order by Nom_Club, Points DESC, Fautes ASC
 \end{lstlisting}
 
-Lors de l'affichage de cette requête, le meilleur joueur d'une équipe est affiché en vert et celui qui a fait le plus de fautes est affiché en rouge. Ces informations booléennes sont contenues dans les colonnes \textit{MeilleurJoueur}, \textit{PireJoueur}. Elles sont obtenues via un test d'égalité entre le nombre de points (respectivement fautes) d'un joueur et le maximum de points marqués (respectivement fautes faites) déterminé à l'aide de deux sous-requêtes.
+Lors de l'affichage de cette requête, le meilleur joueur d'une équipe est affiché en vert et celui qui a fait le plus de fautes est affiché en rouge. Ces informations booléennes sont contenues dans les colonnes \textit{MeilleurJoueur}, \textit{PireJoueur}. Elles sont obtenues via un test d'égalité entre le nombre de points (respectivement fautes) d'un joueur et le maximum de points marqués (respectivement fautes faites) déterminés à l'aide de deux sous-requêtes et de la fonction ``MAX''.
+
+\section{Ajouter}
+
+Afin de faire évoluer la base de données, des scripts d'ajouts via formulaire PHP ont été implémentés. Il est possible d'ajouter des Membres, des Equipes, des Clubs et des Matchs.
+
+\subsection{Membre}
+Pour ajouter un membre, il est nécessaire d'entrer toutes les informations tel que nom, prénom, date de naissance, date d'entrée dans le club, club, activté et poste si responsable. L'adresse n'est pas obligatoire puisque le champs n'est pas à ``NOT NULL'' dans la table Joueur. La validité des dates est vérifiée via une fonction PHP qui teste une chaîne avec une expression régulière. \\
+
+Le club se sélectionne via un menu déroulant pour éviter à l'utilisateur de faire une faute de frappe. Pour ce faire la requête simple ``SELECT Nom FROM Club'' est appliqué à la base de donnée afin de connaître le nom de l'ensemble des clubs. \\
+
+ Pour un membre la sélection d'au moins une activité est obligatoire parmis : Entraineur, Joueur et Responsable, afin de respecter le modèle de l'introduction. Une fois le formulaire rempli et validé, les données sont vérifiés puis insérés dans la base via une requête SQL de type ``INSERT INTO Nom\_Table(...) VALUES (...)''. Dans le cas d'un responsable, afin de vérifier que le poste n'est pas déjà occupé la requête \ref{posteOccupe} est appliquée.
+
+\lstset{frame=single, caption={Requête pour savoir si un poste est occupé}, label=posteOccupe}
+\begin{lstlisting}
+
+SELECT Activite
+
+FROM   Responsable r INNER JOIN Membre m
+       ON r.ID_Membre = m.ID_Membre
+
+WHERE  m.ID_Club = $id_club
+AND    Activite  = $_POST['role']
+
+\end{lstlisting}  
+
+Si jamais le poste est déjà occupé, le nouveau membre est automatiquement supprimé de toutes les tables dans lesquelles il a été créé via une requête SQL de type ``DELETE FROM Table WHERE ID\_Membre = ID\_Nouveau\_Membre''. Ce script ne vérifie pas que la date de naissance du joueur est bien inférieure à sa date d'entrée au club.
+
+\subsection{Club}
+Pour ajouter un club, il faut entrer son nom, sa ville et choisir son Président parmis la liste des joueurs et entraîneurs d'autres clubs n'étant pas responsables (Président, Trésorier...). L'établissement de cette liste ce fait via la requête \ref{irresponsable}.
+
+\lstset{frame=single, caption={Requête pour connaître la liste des personnes n'étant pas Responsables}, label=irresponsable}
+\begin{lstlisting}
+
+SELECT m.ID_Membre, m.Nom, m.Prenom 
+
+FROM Membre m
+
+WHERE NOT EXISTS (SELECT r.ID_Membre 
+                  FROM Responsable r 
+                  WHERE m.ID_Membre = r.ID_Membre)
+
+\end{lstlisting}  
+
+Comme une personne est déplacée d'un club vers le nouveau il est nécessaire de faire appel à une requête de type ``UPDATE Table SET ID\_Club = ... WHERE ID\_Membre = ...''.
+
+\subsection{Equipe}
+L'ajout d'une équipe se fait en choissant un club et une équipe via deux menus déroulants.
+
+\subsection{Match}
+Pour ajouter un match, il faut entrer une date et choisir les deux équipes qui vont se rencontrer. Avant de passer à l'étape suivante, la date et les équipes sont vérifiées. La requête \ref{joueursDispos} permet d'obtenir la liste des joueurs disponibles dans chaque club à cette date. Elle ne vérifie pas que la date de naissance du joueur correspond à la catégorie auquel il est associé.
+
+\lstset{frame=single, caption={Requête pour connaître la liste des joueurs disponibles}, label=joueursDispos}
+\begin{lstlisting}
+
+SELECT DISTINCT m.ID_Membre, m.Nom, m.Prenom, j.Num_Licence, c.Nom AS NomClub 
+
+FROM (Joueur j 
+      INNER JOIN Membre m
+      ON m.ID_Membre = j.ID_Membre)
+     INNER JOIN Club c
+     ON m.ID_Club = c.ID_Club
+
+WHERE c.Nom IN ($locaux, $visiteurs)
+AND m.ID_Membre NOT IN (SELECT m.ID_Membre
+
+                        FROM (Rencontre re
+                              INNER JOIN  Rencontrer rr
+                              ON re.ID_Rencontre = rr.ID_Rencontre)
+                             INNER JOIN Membre m
+                             ON rr.ID_Membre = m.ID_Membre
+
+                        WHERE re.Date_match = $date)
+
+ORDER BY c.Nom
+
+\end{lstlisting}  
+
+Les informations sont ajoutées aux tables Rencontrer et Rencontre avec des fautes et des points attribués de manière aléatoire à chaque joueurs.
 
 \chapter*{Conclusion}
 
