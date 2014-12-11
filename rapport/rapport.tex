@@ -79,11 +79,15 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 
 On peut ensuite passer au schéma relationnel: \\
 Club(\underline{ID\_Club}, Nom, Ville) \\ 
-Membre(\underline{ID\_Membre}, ID\_Club, Nom, Prenom, Date\_Entree) \\
-Joueur(\underline{Num\_Licence}, ID\_Membre, Date\_Naissance, Adresse) \\ 
-Rencontrer(\underline{ID\_Membre}, \underline{ID\_Rencontre}, ID\_Equipe, Points, Fautes) \\
-Sentrainer(\underline{ID\_Membre}, \underline{Date\_Entrainement}, ID\_Equipe) \\
-Entrainer(\underline{ID\_Membre}, \underline{Date\_Entrainement}, ID\_Equipe) 
+Membre(\underline{ID\_Membre}, \#ID\_Club, Nom, Prenom, Date\_Entree) \\
+Entraineur(\underline{\#ID\_Membre}) \\
+Joueur(\underline{Num\_Licence}, \#ID\_Membre, Date\_Naissance, Adresse) \\ 
+Responsable(\underline{\#ID\_Membre}) \\
+Rencontre (\underline{ID\_Rencontre}, Date\_Match) \\
+Equipe(\underline{ID\_Equipe}, Categorie, \#ID\_Club) \\
+Rencontrer(\underline{\#ID\_Membre}, \underline{ID\_Rencontre}, \#ID\_Equipe, Points, Fautes) \\
+Sentrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) \\
+Entrainer(\underline{\#ID\_Membre}, \underline{Date\_Entrainement}, \#ID\_Equipe) 
 
 
 \chapter{Implémentation}
