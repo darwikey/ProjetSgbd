@@ -50,7 +50,7 @@
 
 \chapter*{Introduction}
 
-Le projet consistait en la réalisation d'une base de données gérant les rencontres entre les clubs de basketball d'une fédération. Il fallait implémenter des requêtes permettant d'obtenir des informations sur les clubs, les équipes et les joueurs. Tel que les meilleurs joueurs, les classements des équipes au sein d'un club et/ou de la fédération. Afin d'intéragir avec la base et la faire évoluer simplement, des scripts d'insertion, de modification et de suppression devaient être implémentés.
+Le projet consistait en la réalisation d'une base de données gérant les rencontres entre les clubs de basketball d'une fédération (cf. figure \ref{fig:website}). Il fallait implémenter des requêtes permettant d'obtenir des informations sur les clubs, les équipes et les joueurs. Tel que les meilleurs joueurs, les classements des équipes au sein d'un club et/ou de la fédération. Afin d'intéragir avec la base et la faire évoluer simplement, des scripts d'insertion, de modification et de suppression devaient être implémentés. L'interface entre le client et la base pouvait être implémantée avec n'importe quel langage de n'importe quelle manière tant que cela ne masquait pas les requêtes.
 
 \begin{figure}[h]
   \centering
@@ -79,6 +79,8 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 \item Joueur, Responsable et Entraineur héritent de Membre. Par la contrainte de totalité un Membre doit être soit Joueur soit Responsable soit Entraineur, soit deux parmis les trois, soit les trois à la fois.\\
 
 \item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe.
+
+\item Le fait de ne pas lier les points et les fautes uniquement à une rencontre mais également au joueur permet d'aller plus loin dans l'utilisation des données extraites de la base. Cela donne la possibilité d'établir des moyennes de points marqués (ou fautes faites), de voir l'évolution des joueurs au cours des rencontres etc.  
 
 \end{itemize}
 
