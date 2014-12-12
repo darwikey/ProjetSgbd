@@ -91,7 +91,7 @@ Pour ce projet nous disposons des informations suivantes adaptés de l'énoncé 
 
 \begin{figure}[h]
   \centering
-    \includegraphics[scale=0.7]{Schema_EA.png}
+    \includegraphics[scale=0.5]{Schema_EA.png}
     \label{fig:schema_ea}
     \caption{Schéma Entité-Association établi par l'équipe}
 \end{figure}
@@ -135,7 +135,7 @@ On obtient alors le graphe \ref{fig:depfct} des dépendances fonctionelles.
 
 \begin{figure}[h]
   \centering
-    \includegraphics[scale=0.5]{DepFct.jpeg}
+    \includegraphics[scale=0.35]{DepFct.jpeg}
     \label{fig:depfct}
     \caption{Graphe de dépendances fonctionnelles}
 \end{figure}
@@ -152,7 +152,6 @@ Cette partie liste les différents clubs de la fédération avec pour renseignem
 
 \lstset{frame=single, caption={Requete information sur les clubs}, label=club}
 \begin{lstlisting}
-
 SELECT c.Nom, c.Ville, c.ID_Club,
        (SELECT count(*) 
         FROM Equipe e
@@ -164,7 +163,6 @@ SELECT c.Nom, c.Ville, c.ID_Club,
         AND m.ID_Membre = j.ID_Membre) AS NombreJoueur
 
 FROM Club c;
-
 \end{lstlisting}
 
 \section{Equipes}
@@ -173,7 +171,6 @@ Dans l'onglet 'Equipes' il est possible de visualiser le classement des équipes
 
 \lstset{frame=single, caption={Requête classement des équipes de la fédération par catégorie}, label=equipe}
 \begin{lstlisting}
-
 SELECT c.Nom,
        SUM(e.Points > t.Total/2) AS gagne,
        SUM(e.Points = t.Total/2) AS egual,
@@ -198,7 +195,6 @@ WHERE e.Categorie = $_POST['categorie']
 
 GROUP BY e.ID_Equipe
 ORDER BY gagne DESC, egual DESC, perdu DESC
-
 \end{lstlisting}
 
 Le classement peut-être restreint aux clubs sans distinction des catégories. La requête est sensiblement la même, si ce n'est que la catégorie n'apparait plus comme un critère de sélection et le nom du club devient le premier critère d'ordonnancement de la table (avant 'gagne', 'egual' et 'perdu'). 
@@ -209,7 +205,6 @@ Dans l'onglet 'Joueurs', les joueurs de la fédération sont classés par clubs 
 
 \lstset{frame=single, caption={Requête classement des joueurs par club}, label=joueur}
 \begin{lstlisting}
-
 SELECT c.Nom AS Nom_Club, 
        m.Date_Entree, m.Nom, m.Prenom, 
        j.Adresse, j.Date_Naissance, j.ID_Membre, j.Num_Licence,
@@ -230,7 +225,6 @@ FROM (((Membre m
 
 WHERE YEAR(re.Date_match) = YEAR(NOW())
 GROUP BY c.Nom, j.ID_Membre
-
 \end{lstlisting}
 
 La ligne ``\textit{WHERE YEAR(re.Date\_match) = YEAR(NOW())}'' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
@@ -279,7 +273,6 @@ Une requête permet de lister les matchs et pour chaque match est affiché le sc
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
-
 SELECT DISTINCT rr.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,
                 SUM(rr.Points) AS points, 
                 SUM(rr.Fautes) AS fautes 
@@ -294,7 +287,6 @@ FROM ((Club c
 
 GROUP BY e.ID_Equipe, rr.ID_Rencontre
 ORDER BY re.Date_match, re.ID_Rencontre, points DESC
-
 \end{lstlisting}
 
 Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre en ajoutant une clause ``WHERE''.
@@ -335,22 +327,24 @@ Lors de l'affichage de cette requête, le meilleur joueur d'une équipe est affi
 
 
 \section{Consultation}
-A partir d'une date saisie dans un formulaire, l'utilisateur peut rechercher les joueurs inscrits à la date donnée ou alors obtenir le meilleur joueur sur l'ensemble des matchs joués à cette date.\\
+A partir d'une date saisie dans un formulaire, l'utilisateur peut rechercher les joueurs inscrits à la date donnée ou alors obtenir le meilleur joueur sur l'ensemble des matchs joués à cette date (cf. \ref{consultation}).
 
 \lstset{frame=single, caption={Requête du classement des meilleurs joueurs à une date donnée}, label=consultation}
 \begin{lstlisting}
-Select m.Nom, m.Prenom,
-  sum(r.Points) as Points
+SELECT m.Nom, m.Prenom,
+       SUM(r.Points) AS Points
 				
-  From Membre m, Joueur j, Rencontrer r, Rencontre a, Equipe e
-  Where m.ID_Membre = j.ID_Membre
-    and r.ID_Membre = m.ID_Membre
-    and a.ID_Rencontre = r.ID_Rencontre
-    and a.Date_Match = $date
-    and e.Categorie = $categorie
-    and e.ID_Equipe = r.ID_Equipe
-   Group by j.ID_Membre
-   Order by MoyennePoints DESC
+FROM Membre m, Joueur j, Rencontrer r, Rencontre a, Equipe e
+
+WHERE m.ID_Membre = j.ID_Membre
+AND   r.ID_Membre = m.ID_Membre
+AND   a.ID_Rencontre = r.ID_Rencontre
+AND   a.Date_Match = $date
+AND   e.Categorie = $categorie
+AND   e.ID_Equipe = r.ID_Equipe
+
+GROUP BY j.ID_Membre
+ORDER BY MoyennePoints DESC
 \end{lstlisting}
 
 \section{Ajouter}
@@ -366,7 +360,6 @@ Le club se sélectionne via un menu déroulant pour éviter à l'utilisateur de 
 
 \lstset{frame=single, caption={Requête pour savoir si un poste est occupé}, label=posteOccupe}
 \begin{lstlisting}
-
 SELECT Activite
 
 FROM   Responsable r INNER JOIN Membre m
@@ -374,7 +367,6 @@ FROM   Responsable r INNER JOIN Membre m
 
 WHERE  m.ID_Club = $id_club
 AND    Activite  = $_POST['role']
-
 \end{lstlisting}  
 
 Si jamais le poste est déjà occupé, le nouveau membre est automatiquement supprimé de toutes les tables dans lesquelles il a été créé via une requête SQL de type ``DELETE FROM Table WHERE ID\_Membre = ID\_Nouveau\_Membre''. Ce script ne vérifie pas que la date de naissance du joueur est bien inférieure à sa date d'entrée au club.
@@ -384,7 +376,6 @@ Pour ajouter un club, il faut entrer son nom, sa ville et choisir son Président
 
 \lstset{frame=single, caption={Requête pour connaître la liste des personnes n'étant pas Responsables}, label=irresponsable}
 \begin{lstlisting}
-
 SELECT m.ID_Membre, m.Nom, m.Prenom 
 
 FROM Membre m
@@ -392,7 +383,6 @@ FROM Membre m
 WHERE NOT EXISTS (SELECT r.ID_Membre 
                   FROM Responsable r 
                   WHERE m.ID_Membre = r.ID_Membre)
-
 \end{lstlisting}  
 
 Comme une personne est déplacée d'un club vers le nouveau il est nécessaire de faire appel à une requête de type ``UPDATE Table SET ID\_Club = ... WHERE ID\_Membre = ...''.
@@ -405,7 +395,6 @@ Pour ajouter un match, il faut entrer une date et choisir les deux équipes qui 
 
 \lstset{frame=single, caption={Requête pour connaître la liste des joueurs disponibles}, label=joueursDispos}
 \begin{lstlisting}
-
 SELECT DISTINCT m.ID_Membre, m.Nom, m.Prenom, j.Num_Licence, c.Nom AS NomClub 
 
 FROM (Joueur j 
@@ -426,7 +415,6 @@ AND m.ID_Membre NOT IN (SELECT m.ID_Membre
                         WHERE re.Date_match = $date)
 
 ORDER BY c.Nom
-
 \end{lstlisting}  
 
 Les informations sont ajoutées aux tables Rencontrer et Rencontre avec des fautes et des points attribués de manière aléatoire à chaque joueurs. Le nombre de joueurs participant aux matchs n'est pas vérifié, il est toutefois impossible de ne pas choisir de joueurs pour une équipe. Le nombre minimum de joueurs pouvant jouer est donc un, il n'y a pas de maximum.
@@ -439,9 +427,7 @@ Dans un premier temps il faut sélectionner le club dont les différents noms so
 
 \lstset{frame=single, caption={Requête pour avoir les informations du joueur}, label=infosJoueur}
 \begin{lstlisting}
-
 SELECT r.Activite, m.*, j.Date_Naissance, j.Adresse,
-
        (SELECT COUNT(*) 
         FROM Entraineur e1
         WHERE e1.ID_Membre = $id_membre) AS entraine,
@@ -454,15 +440,12 @@ SELECT r.Activite, m.*, j.Date_Naissance, j.Adresse,
         FROM Responsable r1
         WHERE r1.ID_Membre = $id_membre) AS gere
 
-
 FROM (Membre m 
       INNER JOIN Joueur j
       ON j.ID_Membre = m.ID_Membre)
      LEFT OUTER JOIN Responsable r
      ON r.ID_Membre = $id_membre
-     
 WHERE m.ID_Membre = $id_membre
-
 \end{lstlisting}  
 
 \chapter{Utilisation}
