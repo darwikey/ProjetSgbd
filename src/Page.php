@@ -76,6 +76,10 @@ function main()
         {
           echo Modifier::modifyMembreInformation();
         }
+      else if ($_GET['page'] == 'modifierMembreSauvegarde')
+        {
+          echo Modifier::modifyMembreSave();
+        }
       else
 		{
           echo getFirstPage();

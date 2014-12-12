@@ -121,7 +121,7 @@ class Modifier
         $adresse        = $data['Adresse'];
         $date_entree    = $data['Date_Entree'];
 
-        $r = $r . '<form action="index.php?page=modifierMembreInformation" method="post">
+        $r = $r . '<form action="index.php?page=modifierMembreSauvegarde&id_membre='.$choosen_one.'&entraine='.$data['entraine'].'&joue='.$data['joue'].'&gere='.$data['gere'].' " method="post">
                <p> Entrez le nom :
                 <input type="text" name="nom" value="'.$nom_joueur.'" />
                </p>
@@ -147,7 +147,7 @@ class Modifier
 
         $l = '';
         
-        $club = Database::query("Select Nom, ID_Club from Club");
+        $club = Database::query("SELECT Nom, ID_Club FROM Club");
 
         while($info_club = $club->fetch())
           {
@@ -181,97 +181,97 @@ class Modifier
                  Entraineur <br/>
                 <input type="checkbox" name="activite[]" value="Joueur" ';
 
-          if($data['joue'] > 0)
-            {
-              $r = $r . 'checked="true"';
-            }
+            if($data['joue'] > 0)
+              {
+                $r = $r . 'checked="true"';
+              }
           
-          $r = $r . ' >
+            $r = $r . ' >
                  Joueur <br/>                
                 <input type="checkbox" name="activite[]" value="Responsable" '; 
             
-          if($data['gere'] > 0)
-            {
-              $r = $r . 'checked="true"';
-            }
+              if($data['gere'] > 0)
+                {
+                  $r = $r . 'checked="true"';
+                }
         
-          $r = $r . '>
+              $r = $r . '>
                  Responsable <br/>
                </p>';
           
-          $r = $r . '<p>
-                    <input type="submit" value="Enregistrer" name"Change">
-                   </p>';
-          
-          if(isset($_POST['Change']))
-            {
-              if(isValidDate($_POST['naissance']) and isValidDate($_POST['entree']))
-                {
-                  if($_POST['nom'] != '' and
-                  $_POST['prenom'] != '' and
-                  isset($_POST['activite']))
-                    {
-                      $nom = $_POST['nom'];
-                      $prenom = $_POST['prenom'];
-                      $entree = $_POST['entree'];
-                      $naissance = $_POST['naissance'];
-                      $adresse = $_POST['adresse'];
-
-                      $sql = "UPDATE Membre m, Joueur j SET m.Nom='$nom', m.Prenom='$prenom', m.Date_Entree='$entree', j.Date_naissance='$naissance', j.Adresse='$adresse' where m.ID_Membre='$choosen_one' and j.ID_Membre='$choosen_one'";
-                      
-                      Database::query($sql);
-                      
-                      if(in_array("Entraineur", $_POST['activite']) and ($data['entraine'] == 0))
-                        {
-                          $sql = "INSERT INTO Entraineur(ID_Membre) VALUES ('$choosen_one')";
-                          Database::query($sql);
-                        }
-                      
-                      if((!in_array("Entraineur", $_POST['activite'])) and ($data['entraine'] > 0))
-                        {
-                          $sql = "DELETE FROM Entraineur where ID_Membre = " . $choosen_one;
-                          Database::query($sql);
-                        }
-                      
-                      if(in_array("Joueur", $_POST['activite']) and ($data['joue'] == 0))
-                        {
-                          if($_POST['adresse'] == '')
-                            {
-                              $adresse = NULL;
-                            }
-                          
-                          else
-                            {
-                              $adresse   = $_POST['adresse'];
-                            }
-                          
-                          $sql = "INSERT INTO Joueur(Num_Licence, ID_Membre, Date_Naissance, Adresse) VALUES ('','$choosen_one','$naissance','$adresse')";
-                          Database::query($sql);
-                        }
-                      
-                      if((!in_array("Joueur", $_POST['activite'])) and ($data['joue'] > 0))
-                        {
-                          $sql = "DELETE FROM Joueur where ID_Membre = " . $id_membre;
-                          Database::query($sql);
-                        }
-                      
-                      $r = "Membre modifié avec succés.\n";
-                    }
-                  
-                  else
-                    {
-                      $r = "Informations manquantes.\n";
-                    }
-                }
-              
-              else
-                {
-                  $r = "Date(s) invalide(s).\n";
-                }
-            }
+              $r = $r . '<p>
+                    <input type="submit" value="Enregistrer">
+                   </p>';          
       }
     
     return $r . '</form>';
+  }
+
+  static function modifyMembreSave()
+  {
+    $choosen_one = $_GET['id_membre'];
+
+    if(Database::isValidDate($_POST['naissance']) and Database::isValidDate($_POST['entree']))
+      {
+        if($_POST['nom'] != '' and $_POST['prenom'] != '' and isset($_POST['activite']))
+          {
+            $nom = $_POST['nom'];
+            $prenom = $_POST['prenom'];
+            $entree = $_POST['entree'];
+            $naissance = $_POST['naissance'];
+            $adresse = $_POST['adresse'];
+
+            $sql = "UPDATE Membre m, Joueur j SET m.Nom='$nom', m.Prenom='$prenom', m.Date_Entree='$entree', j.Date_naissance='$naissance', j.Adresse='$adresse' where m.ID_Membre='$choosen_one' and j.ID_Membre='$choosen_one'";
+                      
+            Database::query($sql);
+                      
+            if(in_array("Entraineur", $_POST['activite']) and ($_GET['entraine'] == 0))
+              {
+                $sql = "INSERT INTO Entraineur(ID_Membre) VALUES ('$choosen_one')";
+                Database::query($sql);
+              }
+                      
+            if((!in_array("Entraineur", $_POST['activite'])) and ($_GET['entraine'] > 0))
+              {
+                $sql = "DELETE FROM Entraineur where ID_Membre = " . $choosen_one;
+                Database::query($sql);
+              }
+                      
+            if(in_array("Joueur", $_POST['activite']) and ($_GET['joue'] == 0))
+              {
+                if($_POST['adresse'] == '')
+                  {
+                    $adresse = NULL;
+                  }
+                          
+                else
+                  {
+                    $adresse   = $_POST['adresse'];
+                  }
+                          
+                $sql = "INSERT INTO Joueur(Num_Licence, ID_Membre, Date_Naissance, Adresse) VALUES ('','$choosen_one','$naissance','$adresse')";
+                Database::query($sql);
+              }
+                      
+            if((!in_array("Joueur", $_POST['activite'])) and ($_GET['joue'] > 0))
+              {
+                $sql = "DELETE FROM Joueur where ID_Membre = " . $id_membre;
+                Database::query($sql);
+              }
+                      
+            return "Membre modifié avec succés.\n";
+          }
+                  
+        else
+          {
+            return "Informations manquantes.\n";
+          }
+      }
+              
+    else
+      {
+        return "Date(s) invalide(s).\n";
+      }
   }
 }
 
