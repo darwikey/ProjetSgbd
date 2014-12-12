@@ -305,6 +305,26 @@ Order by Nom_Club, Points DESC, Fautes ASC
 
 Lors de l'affichage de cette requête, le meilleur joueur d'une équipe est affiché en vert et celui qui a fait le plus de fautes est affiché en rouge. Ces informations booléennes sont contenues dans les colonnes \textit{MeilleurJoueur}, \textit{PireJoueur}. Elles sont obtenues via un test d'égalité entre le nombre de points (respectivement fautes) d'un joueur et le maximum de points marqués (respectivement fautes faites) déterminés à l'aide de deux sous-requêtes et de la fonction ``MAX''.
 
+
+\section{Consultation}
+A partir d'une date saisie dans un formulaire, l'utilisateur peut rechercher les joueurs inscrits à la date donnée ou alors obtenir le meilleur joueur sur l'ensemble des matchs joués à cette date.\\
+
+\lstset{frame=single, caption={Requête du classement des meilleurs joueurs à une date donnée}, label=consultation}
+\begin{lstlisting}
+Select m.Nom, m.Prenom,
+  sum(r.Points) as Points
+				
+  From Membre m, Joueur j, Rencontrer r, Rencontre a, Equipe e
+  Where m.ID_Membre = j.ID_Membre
+    and r.ID_Membre = m.ID_Membre
+    and a.ID_Rencontre = r.ID_Rencontre
+    and a.Date_Match = $date
+    and e.Categorie = $categorie
+    and e.ID_Equipe = r.ID_Equipe
+   Group by j.ID_Membre
+   Order by MoyennePoints DESC
+\end{lstlisting}
+
 \section{Ajouter}
 
 Afin de faire évoluer la base de données, des scripts d'ajouts via formulaire PHP ont été implémentés. Il est possible d'ajouter des Membres, des Equipes, des Clubs et des Matchs.
