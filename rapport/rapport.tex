@@ -78,9 +78,9 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 
 \item Joueur, Responsable et Entraineur héritent de Membre. Par la contrainte de totalité un Membre doit être soit Joueur soit Responsable soit Entraineur, soit deux parmis les trois, soit les trois à la fois.\\
 
-\item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe.
+\item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe. \\
 
-\item Le fait de ne pas lier les points et les fautes uniquement à une rencontre mais également au joueur permet d'aller plus loin dans l'utilisation des données extraites de la base. Cela donne la possibilité d'établir des moyennes de points marqués (ou fautes faites), de voir l'évolution des joueurs au cours des rencontres etc.  
+\item Le fait de ne pas lier les points et les fautes uniquement à une rencontre mais également au joueur permet d'aller plus loin dans l'utilisation des données extraites de la base. Cela donne la possibilité d'établir des moyennes de points marqués (ou fautes faites), de voir l'évolution des joueurs au cours des rencontres etc.
 
 \end{itemize}
 
@@ -166,7 +166,7 @@ FROM ((SELECT ID_Rencontre, e1.*,
      INNER JOIN Club c
      ON e.ID_Club = c.ID_Club
 			  
-WHERE e.Categorie = \'' . $_POST['categorie'] . '\'
+WHERE e.Categorie = $_POST['categorie']
 
 GROUP BY e.ID_Equipe
 ORDER BY gagne DESC, egual DESC, perdu DESC
@@ -205,7 +205,7 @@ GROUP BY c.Nom, j.ID_Membre
 
 \end{lstlisting}
 
-La ligne ``\textit{and YEAR(re.Date\_match) = YEAR(NOW())}'' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
+La ligne ``\textit{WHERE YEAR(re.Date\_match) = YEAR(NOW())}'' permet de selectionner seulement les matchs se déroulant pendant la saison courante. Nous sommes partis du principe qu'une saison se déroulait du 1er Janvier d'une année au 31 Décembre de cette même année, pour simplifier les choses.
 
 
 \section{Graphique}
@@ -247,7 +247,7 @@ ORDER BY mois ASC
 
 
 \section{Matchs}
-Une requête permet de lister les matchs et pour chaque match est affiché le score des deux equipes.
+Une requête permet de lister les matchs et pour chaque match est affiché le score des deux equipes, la première affichée étant la gagnante.
 
 \lstset{frame=single, caption={Requête des matchs}, label=match}
 \begin{lstlisting}
@@ -269,7 +269,7 @@ ORDER BY re.Date_match, re.ID_Rencontre, points DESC
 
 \end{lstlisting}
 
-Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre en ajoutant une condition à la clause ``WHERE''.
+Une autre variante de cette requête permet de sélectionner les matchs par date de rencontre en ajoutant une clause ``WHERE''.
 
 
 \section{Feuilles de matchs}
@@ -310,7 +310,7 @@ Lors de l'affichage de cette requête, le meilleur joueur d'une équipe est affi
 Afin de faire évoluer la base de données, des scripts d'ajouts via formulaire PHP ont été implémentés. Il est possible d'ajouter des Membres, des Equipes, des Clubs et des Matchs.
 
 \subsection{Membre}
-Pour ajouter un membre, il est nécessaire d'entrer toutes les informations telles que nom, prénom, date de naissance, date d'entrée dans le club, club, activté et poste si responsable. L'adresse n'est pas obligatoire puisque le champs n'est pas à ``NOT NULL'' dans la table Joueur. La validité des dates est vérifiée via une fonction PHP qui teste une chaîne avec une expression régulière. \\
+Pour ajouter un membre, il est nécessaire d'entrer toutes les informations telles que nom, prénom, date de naissance, date d'entrée dans le club, club, activité et poste si responsable. L'adresse n'est pas obligatoire puisque le champs n'est pas à ``NOT NULL'' dans la table Joueur. La validité des dates est vérifiée via une fonction PHP qui teste une chaîne avec une expression régulière. \\
 
 Le club se sélectionne via un menu déroulant pour éviter à l'utilisateur de faire une faute de frappe. Pour ce faire la requête simple ``SELECT Nom FROM Club'' est appliqué à la base de donnée afin de connaître le nom de l'ensemble des clubs. \\
 
@@ -350,10 +350,10 @@ WHERE NOT EXISTS (SELECT r.ID_Membre
 Comme une personne est déplacée d'un club vers le nouveau il est nécessaire de faire appel à une requête de type ``UPDATE Table SET ID\_Club = ... WHERE ID\_Membre = ...''.
 
 \subsection{Equipe}
-L'ajout d'une équipe se fait en choissant un club et une équipe via deux menus déroulants.
+L'ajout d'une équipe se fait en choissant un club et une catégorie via deux menus déroulants.
 
 \subsection{Match}
-Pour ajouter un match, il faut entrer une date et choisir les deux équipes qui vont se rencontrer. Avant de passer à l'étape suivante, la date et les équipes sont vérifiées. La requête \ref{joueursDispos} permet d'obtenir la liste des joueurs disponibles dans chaque club à cette date. Elle ne vérifie pas que la date de naissance du joueur correspond à la catégorie auquel il est associé.
+Pour ajouter un match, il faut entrer une date et choisir les deux équipes qui vont se rencontrer. Avant de passer à l'étape suivante, la date et les équipes sont vérifiées. La requête \ref{joueursDispos} permet d'obtenir la liste des joueurs disponibles dans chaque club à cette date. Elle ne vérifie pas que la date de naissance du joueur correspond à la catégorie auquel il est associé. Seul deux équipes de même catégorie peuvent se rencontrer par contre.
 
 \lstset{frame=single, caption={Requête pour connaître la liste des joueurs disponibles}, label=joueursDispos}
 \begin{lstlisting}
