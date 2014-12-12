@@ -8,6 +8,12 @@ class Joueur
   static function getList()
   {
     $r = '';
+
+    /*
+      Cette requête retourne uniquement les infos des joueurs ayant joués dans la saison courante
+      Une solution serait de transformer INNER JOIN Rencontrer rr en LEFT OUTER JOIN rr de même sur re
+      Il resterait le problème de l'utilisation de YEAR(re.Date_match) alors que le contenu pour être null
+    */
     $q = Database::query('SELECT c.Nom AS Nom_Club, 
                                  m.Date_Entree, m.Nom, m.Prenom, 
                                  j.Adresse, j.Date_Naissance, j.ID_Membre, j.Num_Licence,
