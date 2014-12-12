@@ -2,11 +2,11 @@
 
 include_once('Database.php');
 
-class Statistique
+class Consultation
 {
 	static function getPage()
 	{
-		$r = '<form action="index.php?page=statistique" method="post">
+		$r = '<form action="index.php?page=consultation" method="post">
 		<p>Afficher : 
 		<select name="choix">
 		<option value="joueurs_inscrits">Joueurs Inscrits</option>
@@ -25,11 +25,11 @@ class Statistique
 			
 			if ($_POST['choix'] == 'joueurs_inscrits')
 			{
-				$r = $r . Statistique::getJoueursInscrits($date);
+				$r = $r . Consultation::getJoueursInscrits($date);
 			}
 			else if ($_POST['choix'] == 'meilleurs_joueurs')
 			{
-				$r = $r . Statistique::getMeilleursJoueurs($date);
+				$r = $r . Consultation::getMeilleursJoueurs($date);
 			}
 		}
 		

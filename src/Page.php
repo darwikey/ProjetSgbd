@@ -4,7 +4,7 @@ include_once('Club.php');
 include_once('Equipe.php');
 include_once('Joueur.php');
 include_once('Match.php');
-include_once('Statistique.php');
+include_once('Consultation.php');
 include_once('Ajouter.php');
 include_once('Feuille.php');
 include_once('Modifier.php');
@@ -32,9 +32,9 @@ function main()
 		{
           echo Match::whichInformation();
 		}
-      else if ($_GET['page'] == 'statistique')
+      else if ($_GET['page'] == 'consultation')
 		{
-          echo Statistique::getPage();
+          echo Consultation::getPage();
 		}
       else if ($_GET['page'] == 'ajouter')
 		{
