@@ -1,4 +1,4 @@
-\documentclass[a4paper»,8pt,french,fleqn]{report}
+\documentclass[a4paper,8pt,french,fleqn]{report}
 %Packages:
 
 %Langages:
@@ -61,6 +61,32 @@ Le projet consistait en la réalisation d'une base de données gérant les renco
 
 \chapter{Présentation du modèle}
 
+\section{Description du contexte}
+
+Pour ce projet nous disposons des informations suivantes adaptés de l'énoncé du projet : \\
+
+\begin{itemize}
+
+\item Un club de basket possède un bureau formé d'un président et optionellement d'un trésorier et d'un secrétaire. \\
+
+\item Au sein d'un même club il existe plusieurs catégories et plusieurs équipes de ce club peuvent appartenir à la même catégorie. \\
+
+\item Chaque équipe est composée de plusieurs joueurs lors d'une recontre ou d'un entraînement. Pour un entraînement une équipe a au moins un entraineur. \\
+
+\item Un membre a un nom, un prénom, une date d'entrée et appartient à un unique club. \\
+
+\item Entraineur, joueur et responsable sont des membres. \\
+
+\item Un joueur est également défini par une date de naissance, une adresse et un numéro de licence. \\
+
+\item Un responsable joue un rôle dans le club : Président, trésorier, secrétaire. \\
+
+\item Un entraineur peut entraîner plusieurs équipes du club à des dates différentes. \\
+
+\item Une rencontre est caractérisée par une date, et un numéro. Elle se déroule entre deux équipes. Pour chaque rencontre on associe donc deux équipes, des joueurs affiliés à chaque équipe et un nombre de points marquées et fautes faites affiliés à chaque joueur.
+
+\end{itemize}
+
 \section{Schéma Entité-Association}
 
 \begin{figure}[h]
@@ -80,7 +106,9 @@ D'après la figure \ref{fig:schema_ea}, plusieurs choix ont été fait dans la s
 
 \item La contrainte d'intégrité fonctionnelle appliquée à Joueur et Rencontre permet d'associer un Joueur à une seule équipe lors d'une rencontre. De même pour les entrainements, à une date donnée, un entraineur entraîne une seule équipe et un joueur ne peut s'entraîner qu'avec une équipe. \\
 
-\item Le fait de ne pas lier les points et les fautes uniquement à une rencontre mais également au joueur permet d'aller plus loin dans l'utilisation des données extraites de la base. Cela donne la possibilité d'établir des moyennes de points marqués (ou fautes faites), de voir l'évolution des joueurs au cours des rencontres etc.
+\item Le fait de ne pas lier les points et les fautes uniquement à une rencontre mais également au joueur permet d'aller plus loin dans l'utilisation des données extraites de la base. Cela donne la possibilité d'établir des moyennes de points marqués (ou fautes faites), de voir l'évolution des joueurs au cours des rencontres etc. \\
+
+\item Si plusieurs équipes d'un même club jouent dans la même catégorie, elles sont différenciées par leur ID.
 
 \end{itemize}
 
@@ -417,9 +445,16 @@ WHERE m.ID_Membre = $id_membre
 
 \end{lstlisting}  
 
+\chapter{Utilisation}
+
+Le projet a été réalisé comme un site web fonctionnant sous PHP avec les extensions PDO\_MYSQL et GD2. La base de données à été implémantée dans MySQL. Nos tests ont été faits avec un serveur Apache 2.4.9, PHP 5.5.12 et MySQL 5.6.17. \\
+
+Après vous être identifité dans MySQL, il faut créer la base de données ``basketball'' et charger les tables contenus dans le fichier ``base.sql''. Il faut ensuite injecter les données contenus dans ``donnees.sql''. De base le login pour la base de données est 'root' et il n'y a aucun mot de passe de défini. Ces informations peuvent être modifiées dans ``Database.php''. \\
+
+La page de garde du site est ``index.php''.
+
 \chapter*{Conclusion}
 
-Ce projet nous a permis de mettre en pratique les connaissances apprises sur les bases de données. Nous avons pu nous rendre compte que prévoir un bon modèle n'est pas facile, qu'il faut faire des choix et nous l'avons mieux adapté pendant l'implémentation. L'insertion de requetes sql se fait sans réels problèmes en PHP mais les scripts d'ajouts et de modification deviennent vite assez lourds puisqu'on doit vérifier que les données entrées sont correctes pour etre insérées dans la base de données.  
-
+Ce projet nous a permis de mettre en pratique les connaissances apprises sur les bases de données. Nous avons pu nous rendre compte que prévoir un bon modèle n'est pas facile et que chaque choix d'implémentation à des avantages et des inconvénients. L'insertion de requetes SQL se fait sans réels problèmes en PHP mais les scripts d'ajouts et de modification deviennent vite assez lourds lorsque l'on prend en compte la vérification des données entrées pour s'assurer de leur bonne insertion dans la base de données. Une première évolution serait la mise en place d'une vue afin de connaître l'âge des joueurs pour pouvoir gérer correctement les catégories lors des matchs. Bien qu'implémentée en tant que table dans la base de données, Sentrainer n'a pas été utilisé dans ce projet, nous pourrions également envisager de développer cette partie.
 
 \end{document}
