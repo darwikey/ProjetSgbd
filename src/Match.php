@@ -35,6 +35,8 @@ class Match
     return $r;
   }
 
+  // affiche la liste des matchs  en les classant par date
+  // On donne les scores, les points marqués et les fautes
   static function getMatch()
   {
     $q = Database::query('SELECT DISTINCT rr.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,
@@ -88,6 +90,8 @@ class Match
     return $r;
   }
 
+  // affiche la liste des matchs pour une date donnée
+  // On donne les scores, les points marqués et les fautes
   static function getMatchAtDate()
   {
     $q = Database::query('Select Distinct r.ID_Equipe, c.Nom, e.Categorie, re.Date_match, re.ID_Rencontre,

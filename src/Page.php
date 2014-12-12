@@ -87,7 +87,7 @@ function main()
 	}
 }
 
-
+// Première page du site
 function getFirstPage()
 {
   return '<div style="text-align: center"><img src="img/basket-manager.jpg" width=1000/></div>';

@@ -42,6 +42,9 @@ class Equipe
     return $r . '</form>';
   }
   
+  // classe les equipes, de la meilleur à la moins bonne
+  // le classement s'effectue en priorité sur le nombre de match gagné
+  // On affiche en plus pour chaque equipe lasomme des matchs gagnés, perdus ou nuls
   static function getClassement()
   {
 	if (! isset($_POST['categorie']))
@@ -76,6 +79,8 @@ class Equipe
 			GROUP BY e.ID_Equipe
 			ORDER BY gagne DESC, egual DESC, perdu DESC');
 
+			
+	// affichage des résultats dans un tableau html
     $r = $r . '<h1> CLASSEMENT '. $_POST['categorie'] . '</h1>
                      <table>
                       <tr>
@@ -102,6 +107,7 @@ class Equipe
     return $r;
   }
 
+  // Pour chaque club, liste les equipes en les classant de la meilleur à la moins bonne
   static function getEquipeListe()
   {
 	$r = '';
@@ -133,6 +139,7 @@ class Equipe
     $data = $q->fetch();
     $nom_club = $data['Nom'];
 
+	// Création d'un tableau html pour afficher les résultats
     $r = $r . "<h1> '$nom_club' </h1> <table>
                       <tr> 
                        <td> Categorie </td>

@@ -36,6 +36,7 @@ class Statistique
 		return $r;
 	}
 	
+	// retourne la liste de tous les joueurs inscrit à une date donnée
 	static function getJoueursInscrits($date)
 	{
 		$r = '<ul>';
@@ -53,6 +54,8 @@ class Statistique
 		return $r . '</ul>';
 	}
 	
+	// retourne le classement de tous les joueurs ayant joués un match à une date donnée
+	// ils sont triés par le nombre de points marqués
 	static function getMeilleursJoueurs($date)
 	{
 		$r = '';

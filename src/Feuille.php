@@ -4,6 +4,8 @@ include_once('Database.php');
 
 class Feuille
 {
+  // affiche la feuille de match pour une rencontre
+  // pour chaque equipe on liste les joueur
   static function getFeuilleMatch($id_rencontre)
   {
     $r = '<ul>';
