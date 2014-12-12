@@ -1,3 +1,5 @@
+-- requete prenant en parametre une categorie
+
 SELECT c.Nom,
 SUM(e.Points > t.Total/2) AS gagne,
 SUM(e.Points = t.Total/2) AS egual,
@@ -16,6 +18,6 @@ FROM ((SELECT ID_Rencontre, e1.*,
  
 INNER JOIN Club c
 ON e.ID_Club = c.ID_Club
-WHERE e.Categorie = \'' . $_POST['categorie'] . '\'
+WHERE e.Categorie = $_POST['categorie']
 GROUP BY e.ID_Equipe
 ORDER BY gagne DESC, egual DESC, perdu DESC

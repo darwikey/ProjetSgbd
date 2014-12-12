@@ -24,6 +24,6 @@ From (
 inner join Joueur j
 On m.ID_Membre = j.ID_Membre)
 
-Where r0.ID_Rencontre = ' . $id_rencontre . '
+Where r0.ID_Rencontre = $id_rencontre
 
 Order by Nom_Club, Points DESC, Fautes ASC'
