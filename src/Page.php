@@ -8,6 +8,8 @@ include_once('Consultation.php');
 include_once('Ajouter.php');
 include_once('Feuille.php');
 include_once('Modifier.php');
+include_once('Supprimer.php');
+
 
 function main()
 {
@@ -80,6 +82,10 @@ function main()
         {
           echo Modifier::modifyMembreSave();
         }
+	  else if ($_GET['page'] == 'supprimer')
+        {
+          echo Supprimer::getPage();
+        }
       else
 		{
           echo getFirstPage();
@@ -98,7 +104,3 @@ function getFirstPage()
 }
 
 ?>
-
-
-
-
